@@ -1,5 +1,6 @@
 # Measurable Success Criteria
 
+By outlining the success criteria from the project writeup here, the purpose of the system should be clear.
 In order for the solution to be successful, it should meet the following success criteria:
 
 1. The system should store 3 years [or more] of financial data stored about the companies in a database.
