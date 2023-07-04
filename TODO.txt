@@ -1,0 +1,15 @@
+[] find api for data
+[] make database
+
+[] make preset features using json
+
+[] write sorting features
+
+
+[] write searching features
+
+
+[] write graphing features
+
+
+[] write settings features
