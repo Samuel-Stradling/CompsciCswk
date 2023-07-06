@@ -1,4 +1,5 @@
 [] find api for data
+[] determine data to be tracked
 [] make database
 
 [] make preset features using json
