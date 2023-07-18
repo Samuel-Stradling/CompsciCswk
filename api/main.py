@@ -11,7 +11,7 @@ def get_data(companies: dict, dateRange:int):
     api_key = os.environ.get("api-token")
     for company in companies:
         url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{company}?timeseries={dateRange}&apikey={api_key}'
-        print(requests.get(url))
+        print(requests.get(url).json())
 
 
     
