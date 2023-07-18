@@ -101,3 +101,4 @@ company_dictionary = {
     'JD': 'JD.com Inc ADR',
     'LCID': 'Lucid Group Inc'
 }
+# from the nasdaq
