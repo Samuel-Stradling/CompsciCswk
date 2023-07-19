@@ -3,7 +3,7 @@ import json
 import os
 from dotenv import load_dotenv
 from companies import company_dictionary
-
+#
 def get_data(companies: dict, dateRange:int):
 
 
