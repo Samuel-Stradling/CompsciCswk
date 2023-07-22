@@ -1,7 +1,10 @@
 import json
-from companies import company_dictionary
 
 def call_api(company: str, dateRange: int) -> json:
+    """Data comes back as dictionary
+    Dictionary has two master keys: symbol, and historical
+    The historical key contains {dateRange} arrays, each with keys such as date, open
+    close, change"""
     import requests
     import os
     from dotenv import load_dotenv
@@ -13,20 +16,18 @@ def call_api(company: str, dateRange: int) -> json:
 def cleanse_data(originalIn: json) -> json:
     dirtyData = originalIn.copy()
 
-    # for key in dirtyData:
-    #     print(key)
-
-    del dirtyData["historical"]["open"]
-    del dirtyData["high"]
-    del dirtyData["low"]
-    del dirtyData["unadjustedVolume"]
-    del dirtyData["vwap"]
-    del dirtyData["label"]
-    del dirtyData["changeOverTime"]
+    for dictionary in dirtyData["historical"]:
+        del dictionary["open"]
+        del dictionary["high"]
+        del dictionary["low"]
+        del dictionary["unadjustedVolume"]
+        del dictionary["vwap"]
+        del dictionary["label"]
+        del dictionary["changeOverTime"]
 
     return dirtyData
 
-a = cleanse_data(call_api("AAPL", 4))
+a = cleanse_data(call_api("AAPL", 2))
 
 
 
