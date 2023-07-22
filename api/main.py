@@ -27,7 +27,9 @@ def cleanse_data(originalIn: json) -> json:
 
     return dirtyData
 
-a = cleanse_data(call_api("AAPL", 2))
+
+if __name__ == "__main__":
+    a = cleanse_data(call_api("AAPL", 2))
 
 
 
