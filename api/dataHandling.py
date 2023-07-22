@@ -33,3 +33,4 @@ def cleanse_data(originalIn: json) -> json:
 
 if __name__ == "__main__":
     a = cleanse_data(call_api("AAPL", 2))
+    print(a)
