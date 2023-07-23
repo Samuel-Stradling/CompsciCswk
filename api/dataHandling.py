@@ -1,6 +1,7 @@
 import json
 import requests
 import os
+import sys
 
 
 def call_api(company: str, dateRange: int) -> json:
@@ -45,7 +46,10 @@ def call_api(company: str, dateRange: int) -> json:
     load_dotenv()
     api_key = os.environ.get("api-token")
     url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{company}?timeseries={dateRange}&apikey={api_key}"
-    return requests.get(url).json()
+    try:
+        return requests.get(url).json()
+    except:
+        sys.exit("Invalid api URL")
 
 
 def cleanse_data(originalIn: json) -> json:
@@ -84,18 +88,24 @@ def cleanse_data(originalIn: json) -> json:
 
     dirtyData = originalIn.copy()
 
-    for dictionary in dirtyData["historical"]:
-        del dictionary["open"]
-        del dictionary["high"]
-        del dictionary["low"]
-        del dictionary["unadjustedVolume"]
-        del dictionary["vwap"]
-        del dictionary["label"]
-        del dictionary["changeOverTime"]
+    try:
 
-    return dirtyData
+        for dictionary in dirtyData["historical"]:
+            del dictionary["open"]
+            del dictionary["high"]
+            del dictionary["low"]
+            del dictionary["unadjustedVolume"]
+            del dictionary["vwap"]
+            del dictionary["label"]
+            del dictionary["changeOverTime"]
+
+        return dirtyData
+    except KeyError:
+        sys.exit("Invalid company acronym")
 
 
 if __name__ == "__main__":
-    a = cleanse_data(call_api("AAPL", 2))
-    print(a)
+    # from companies import company_dictionary
+    # for company in company_dictionary:
+    #     print(cleanse_data(call_api(company, 1)))
+    ## NOT NECESSAR::::::: https://site.financialmodelingprep.com/developer/docs/list-of-nasdaq-companies-api/ !!!!
