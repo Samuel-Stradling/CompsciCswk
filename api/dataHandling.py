@@ -108,4 +108,3 @@ if __name__ == "__main__":
     # from companies import company_dictionary
     # for company in company_dictionary:
     #     print(cleanse_data(call_api(company, 1)))
-    ## NOT NECESSAR::::::: https://site.financialmodelingprep.com/developer/docs/list-of-nasdaq-companies-api/ !!!!
