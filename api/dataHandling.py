@@ -104,7 +104,7 @@ def cleanse_data(originalIn: json) -> json:
         sys.exit("Invalid company acronym")
 
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     # from companies import company_dictionary
     # for company in company_dictionary:
     #     print(cleanse_data(call_api(company, 1)))
