@@ -1,37 +1,47 @@
-import json
+import requests
 
 
-def call_api(date: int) -> json:
+def call_all_companies(date: str) -> list:
     """date is yyyy-mm-dd"""
 
-    import requests
     import os
     from dotenv import load_dotenv
+    from companies import company_dictionary
 
     load_dotenv()
     api_key = os.environ.get("api-token")
 
     url = f"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date}?adjusted=true&apiKey={api_key}"
 
-    data = requests.get(url).json()
-    return data
+    rawData = requests.get(url).json()
+
+    counter = 0
+    companySortedData = [date]
+    while counter < len(rawData["results"]):
+        subDictionary = rawData["results"][counter]
+        if subDictionary["T"] in company_dictionary:
+            companySortedData.append(subDictionary)
+        counter += 1
+
+    return companySortedData
 
 
-def cleanse_data(originalIn: json) -> json:
-    from companies import company_dictionary
-
-    i = 0
-    sortedData = []
-    while i < len(originalIn["results"]):
-        diction = originalIn["results"][i]
-        if diction["T"] in company_dictionary:
-            sortedData.append(diction)
-        i += 1
-    print(len(sortedData))
-    return sortedData
+def call_ticker(ticker: str, date: str):
+    # this will need web-scraping from: https://polygon.io/quote/{ticker}
+    response = requests.get("https://polygon.io/quote/AAPL").text
+    print(response)
 
 
-# data = call_api(company_dictionary, 1)
+def cleanse_data(originalIn: list) -> list:
+    for index, dictionary in enumerate(originalIn):
+        if index == 0:
+            continue
+        del dictionary["l"]
+        del dictionary["n"]
+        del dictionary["t"]
 
-# with open("out.json", "w") as jsonFile:
-#     json.dump(data, jsonFile, indent=4)
+    return originalIn
+
+
+# a = cleanse_data(call_all_companies("2023-07-27"))
+call_ticker("a", 1)
