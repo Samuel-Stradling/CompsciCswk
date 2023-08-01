@@ -1,3 +1,3 @@
-# from api.dataHandling import call_api
+# from api.dataHandling import call_ticker_current
 
-# print(call_api("AAPL", 3))
+# print(call_ticker_current("AAPL"))
