@@ -15,7 +15,7 @@ def call_all_companies(date: str) -> list:
 
     Returns:
         list: A list containing the date (element 0) and relevant company data as dictionaries (subsequent elements are dictionaries).
-        
+
     Raises:
         Exception: if the API call fails or returns an error
 
@@ -63,6 +63,43 @@ def call_all_companies(date: str) -> list:
 
 
 def call_ticker_current(ticker: str) -> list:
+    """
+    Fetches the current stock data for a given ticker by webscraping the Polygon.io site.
+
+    Parameters:
+        ticker (str): The ticker symbol of the stock.
+
+    Returns:
+        list: A list containing the current stock data in the following format:
+            [date, {"ticker": ticker, "currentOpen": open_price, "currentHigh": high_price,
+            "currentLow": low_price, "currentVolume": volume, "prevClose": previous_close_price,
+            "currentPrice": current_price, "currentPercentageChange": percentage_change}]
+            - date (str): The current date in the format 'YYYY-MM-DD'.
+            - ticker (str): The provided ticker symbol.
+            - currentOpen (float): The opening price of the current trading session.
+            - currentHigh (float): The highest price of the current trading session.
+            - currentLow (float): The lowest price of the current trading session.
+            - currentVolume (int): The current trading volume.
+            - prevClose (float): The closing price of the previous trading session.
+            - currentPrice (float): The current price of the stock.
+            - currentPercentageChange (str): The percentage change of the stock price from the opening.
+
+    Raises:
+        NameError: If the provided ticker yields a non-200 status code response from the Polygon.io API.
+
+    Dependencies:
+        - bs4 (BeautifulSoup): For parsing HTML content.
+        - re (Regular Expression): For pattern matching.
+        - datetime: For capturing the current date and time.
+        - json: For parsing JSON data.
+        - requests: For making HTTP requests.
+
+    Example:
+        >>> call_ticker_current("GOOGL")
+        ['2023-08-01', {'ticker': 'GOOGL', 'currentOpen': 2759.12, 'currentHigh': 2780.00,
+        'currentLow': 2740.10, 'currentVolume': 1248000, 'prevClose': 2745.98, 'currentPrice': 2768.99,
+        'currentPercentageChange': '+0.85%'}]
+    """
     from bs4 import BeautifulSoup
     import re
     import datetime
@@ -128,5 +165,5 @@ def cleanse_data(originalIn: list) -> list:
     return originalIn
 
 
-a = cleanse_data(call_all_companies("2023-07-27"))
+# a = cleanse_data(call_all_companies("2023-07-27"))
 # print(call_ticker_current("GOOG"))
