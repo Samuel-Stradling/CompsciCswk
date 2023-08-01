@@ -71,18 +71,18 @@ def call_ticker_current(ticker: str) -> list:
 
     Returns:
         list: A list containing the current stock data in the following format:
-            [date, {"ticker": ticker, "currentOpen": open_price, "currentHigh": high_price,
-            "currentLow": low_price, "currentVolume": volume, "prevClose": previous_close_price,
-            "currentPrice": current_price, "currentPercentageChange": percentage_change}]
-            - date (str): The current date in the format 'YYYY-MM-DD'.
-            - ticker (str): The provided ticker symbol.
-            - currentOpen (float): The opening price of the current trading session.
-            - currentHigh (float): The highest price of the current trading session.
-            - currentLow (float): The lowest price of the current trading session.
-            - currentVolume (int): The current trading volume.
-            - prevClose (float): The closing price of the previous trading session.
-            - currentPrice (float): The current price of the stock.
-            - currentPercentageChange (str): The percentage change of the stock price from the opening.
+        [date, {"ticker": ticker, "currentOpen": open_price, "currentHigh": high_price,
+        "currentLow": low_price, "currentVolume": volume, "prevClose": previous_close_price,
+        "currentPrice": current_price, "currentPercentageChange": percentage_change}]
+        - date (str): The current date in the format 'YYYY-MM-DD'.
+        - ticker (str): The provided ticker symbol.
+        - currentOpen (float): The opening price of the current trading session.
+        - currentHigh (float): The highest price of the current trading session.
+        - currentLow (float): The lowest price of the current trading session.
+        - currentVolume (int): The current trading volume.
+        - prevClose (float): The closing price of the previous trading session.
+        - currentPrice (float): The current price of the stock.
+        - currentPercentageChange (str): The percentage change of the stock price from the opening.
 
     Raises:
         NameError: If the provided ticker yields a non-200 status code response from the Polygon.io API.
@@ -148,6 +148,42 @@ def call_ticker_current(ticker: str) -> list:
 
 
 def cleanse_data(originalIn: list) -> list:
+    """
+    Cleanse the input list of dictionaries containing financial data.
+
+    This function removes unnecessary fields and renames some fields in each dictionary
+    to create a more streamlined and user-friendly format.
+
+    Parameters:
+        originalIn (list): A list of dictionaries where each dictionary represents
+                           financial data for a particular entry.
+
+    Returns:
+        list: A modified list of dictionaries with the following changes:
+              1. Remove the fields 'l' (low), 'n' (number of transactions), and
+                 't' (time in unix msec) from each dictionary.
+              2. Rename the fields 'T' to 'ticker', 'v' to 'volume', 'vw' to
+                 'volumeWeighted', 'o' to 'open', 'c' to 'close', and 'h' to 'high'.
+              3. OriginalIn is modified in-place.
+    Raises:
+        None: No exceptions are raised
+
+    Dependencies:
+        None
+
+    Example:
+        >>> input_data = [
+        ...     {"T": "AAPL", "v": 1000, "vw": 150.25, "o": 148.50, "c": 149.20, "h": 150.50, "l": 147.80, "n": 50, "t": 165432344},
+        ...     {"T": "GOOGL", "v": 500, "vw": 2755.60, "o": 2740.00, "c": 2770.30, "h": 2785.50, "l": 2730.10, "n": 25, "t": 165432355},
+        ...     # Additional data entries...
+        ... ]
+        >>> cleanse_data(input_data)
+        [
+            {"ticker": "AAPL", "volume": 1000, "volumeWeighted": 150.25, "open": 148.50, "close": 149.20, "high": 150.50},
+            {"ticker": "GOOGL", "volume": 500, "volumeWeighted": 2755.60, "open": 2740.00, "close": 2770.30, "high": 2785.50},
+            # Modified entries...
+        ]
+    """
     for index, dictionary in enumerate(originalIn):
         if index == 0:
             continue
@@ -165,5 +201,5 @@ def cleanse_data(originalIn: list) -> list:
     return originalIn
 
 
-# a = cleanse_data(call_all_companies("2023-07-27"))
-# print(call_ticker_current("GOOG"))
+a = cleanse_data(call_all_companies("2023-07-27"))
+print(call_ticker_current("GOOG"))
