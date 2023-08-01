@@ -7,7 +7,32 @@ import requests
 
 
 def call_all_companies(date: str) -> list:
-    """date is yyyy-mm-dd"""
+    """
+    Retrieves data about companies from an API based on the given date.
+
+    Parameters:
+        date (str): The date in the format 'yyyy-mm-dd' for which data is requested.
+
+    Returns:
+        list: A list containing the date (element 0) and relevant company data as dictionaries (subsequent elements are dictionaries).
+        
+    Raises:
+        Exception: if the API call fails or returns an error
+
+    Dependencies:
+        - The function relies on the 'requests' module to make API calls.
+        - The function also depends on a 'companies' module that contains the 'company_dictionary'.
+        - The function requires the 'dotenv' module to load environment variables.
+
+    Note:
+        - Make sure to set up the 'api-token' environment variable with your API key.
+        - The function will filter for relevant companies based on the 'company_dictionary'.
+
+    Example:
+        >>> data = call_all_companies('2023-07-31')
+        >>> print(data)
+        ['2023-07-31', {'c': 100.2, 'h': 105.0, 'l': 99.5, 'o': 101.0, 't': 166726400000, 'n': 1200, 'v': 500000}]
+    """
 
     import os
     from dotenv import load_dotenv
@@ -18,7 +43,11 @@ def call_all_companies(date: str) -> list:
 
     url = f"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date}?adjusted=true&apiKey={api_key}"
 
-    rawData = requests.get(url).json()
+    try:
+        rawData = requests.get(url).json()
+    except:
+        print("API did not return a result")
+        return -1
 
     counter = 0
     companySortedData = [date]
@@ -99,5 +128,5 @@ def cleanse_data(originalIn: list) -> list:
     return originalIn
 
 
-# a = cleanse_data(call_all_companies("2023-07-27"))
-print(call_ticker_current("GOOG"))
+a = cleanse_data(call_all_companies("2023-07-27"))
+# print(call_ticker_current("GOOG"))
