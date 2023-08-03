@@ -1,8 +1,0 @@
-- requests
-- os
-- dotenv
-- companies -> internal
-- bs4
-- re
-- datetime
-- json
