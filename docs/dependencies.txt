@@ -1,0 +1,11 @@
+External Python Libraries:
+    requests
+    os
+    dotenv
+    bs4
+    re
+    datetime
+    json
+
+
+companies -> internal
