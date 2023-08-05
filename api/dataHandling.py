@@ -119,7 +119,7 @@ def call_ticker_current(ticker: str) -> list:
         )  # the current price is found from the title of the webpage, along with percentage change from open
         if currentPriceElement:
             currentPriceRaw = currentPriceElement.text.strip()
-            pattern = r"(-\d+\.\d{2}%|\+\d+\.\d{2}%) (\d+\.\d+)"  # first group is for the percentage, accounting for a +ve & -ve. second group for current price
+            pattern = r"(-\d+\.\d{2}%|\+\d+\.\d{2}%) (\d+\.?\d+?)"  # first group is for the percentage, accounting for a +ve & -ve. second group for current price
             currentPercentageChange = re.search(pattern, currentPriceRaw).group(1)
             currentPriceValue = float(re.search(pattern, currentPriceRaw).group(2))
 
@@ -201,5 +201,10 @@ def cleanse_data(originalIn: list) -> list:
     return originalIn
 
 
-a = cleanse_data(call_all_companies("2023-07-27"))
-print(call_ticker_current("GOOG"))
+# a = cleanse_data(call_all_companies("2023-07-27"))
+# print(call_ticker_current("INTU"))
+# from companies import company_dictionary
+# for company in company_dictionary:
+#     call_ticker_current(company)
+#     print(f"{company} success \n\n")
+
