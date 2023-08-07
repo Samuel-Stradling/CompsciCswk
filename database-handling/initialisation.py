@@ -9,3 +9,6 @@ def fill_Companies_table():
 def add_historic_data():
     # this will be very complex
     pass
+
+
+# MAKE DATAHANDLING.PY INTO CLASS WITH TOOL METHODS???

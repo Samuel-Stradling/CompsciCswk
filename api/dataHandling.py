@@ -2,6 +2,7 @@
 
 # The cleansed data is as follows: [date, {ticker:"AAPL", ...}]
 
+# MAKE DATAHANDLING.PY INTO CLASS WITH TOOL METHODS???
 
 import requests
 
