@@ -19,6 +19,7 @@ def call_all_companies(date: str) -> list:
 
     Raises:
         Exception: if the API call fails or returns an error
+        ValueError: 'manually' raised for later use in the initialisation of the db
 
     Dependencies:
         - The function relies on the 'requests' module to make API calls.
@@ -47,8 +48,7 @@ def call_all_companies(date: str) -> list:
     try:
         rawData = requests.get(url).json()
     except:
-        print("API did not return a result")
-        return -1
+        raise ValueError(f'The market was not open on {date}')
 
     counter = 0
     companySortedData = [date]
