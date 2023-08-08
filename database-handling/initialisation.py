@@ -200,10 +200,31 @@ def fill_Companies_table():
 
 
 def add_historic_data():
-    # this will be very complex
-    pass
+    import sys
+    sys.path.insert(1, 'C:\\Users\Sam\\Documents\\Programming\\CompsciCswk\\api\\')
 
 
-fill_Companies_table()
+    from dataHandling import call_all_companies 
+
+    print(call_all_companies("2023-08-07"))
+
+
+def fill_dates_for_historic_data():
+    from datetime import datetime, timedelta
+
+    # Get the current date
+    current_date = datetime.now()
+
+    # Calculate the date three years ago from the current date
+    three_years_ago = current_date - timedelta(days=3*365)  # Approximate for simplicity
+
+    # Iterate through the dates from three years ago until the current date
+    date_iterator = three_years_ago
+    while date_iterator <= current_date:
+        print(date_iterator.date())  # Print the date portion
+        date_iterator += timedelta(days=1)  # Move to the next day
+
+
+add_historic_data()
 
 # MAKE DATAHANDLING.PY INTO CLASS WITH TOOL METHODS???
