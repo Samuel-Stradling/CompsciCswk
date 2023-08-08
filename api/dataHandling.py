@@ -45,10 +45,14 @@ def call_all_companies(date: str) -> list:
 
     url = f"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date}?adjusted=true&apiKey={api_key}"
 
-    try:
-        rawData = requests.get(url).json()
-    except:
-        raise ValueError(f'The market was not open on {date}')
+    rawData = requests.get(url)
+    if rawData.status_code != 200:
+        raise ValueError(f"The given date ({date}) was erroneous")
+
+    rawData = rawData.json()
+
+    if rawData["queryCount"] == 0:
+        raise ValueError(f"The market was closed on {date}")
 
     counter = 0
     companySortedData = [date]
@@ -208,4 +212,3 @@ def cleanse_data(originalIn: list) -> list:
 # for company in company_dictionary:
 #     call_ticker_current(company)
 #     print(f"{company} success \n\n")
-
