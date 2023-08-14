@@ -199,32 +199,48 @@ def fill_Companies_table():
 
 
 
-def add_historic_data():
+def check_historic_data():
     import sys
-    sys.path.insert(1, 'C:\\Users\Sam\\Documents\\Programming\\CompsciCswk\\api\\')
+    sys.path.insert(
+        1, 'C:\\Users\Sam\\Documents\\Programming\\CompsciCswk\\api\\')
 
-
-    from dataHandling import call_all_companies 
-
-    print(call_all_companies("2023-08-07"))
+    from dataHandling import call_all_companies
+    print(call_all_companies("2021-08-13"))
 
 
 def fill_dates_for_historic_data():
+    import sys
+    sys.path.insert(
+        1, 'C:\\Users\Sam\\Documents\\Programming\\CompsciCswk\\api\\')
+
+    from dataHandling import call_all_companies
     from datetime import datetime, timedelta
 
-    # Get the current date
-    current_date = datetime.now()
+    yesterdayDate = datetime.now() - timedelta(days=1)
 
-    # Calculate the date three years ago from the current date
-    three_years_ago = current_date - timedelta(days=3*365)  # Approximate for simplicity
+    # Approximate for simplicity
+    twoYearsAgo = yesterdayDate - timedelta(days=2*365)
 
-    # Iterate through the dates from three years ago until the current date
-    date_iterator = three_years_ago
-    while date_iterator <= current_date:
-        print(date_iterator.date())  # Print the date portion
-        date_iterator += timedelta(days=1)  # Move to the next day
+    dateIterator = twoYearsAgo
+
+    conn = sqlite3.connect('data\main.sql')
+    cursor = conn.cursor()
+    while dateIterator <= yesterdayDate:
+
+            cursor.execute(
+                "INSERT INTO DateStatuses (date, complete_data, market_open) VALUES (?, ?, ?)", (str(dateIterator.date()), True, True))
+
+        conn.commit()
+    cursor.close()
+    conn.close()
+
+    #https://stackoverflow.com/questions/55758380/programmatically-check-if-today-is-a-market-open-trading-day
 
 
-add_historic_data()
+
+
+check_historic_data()
+
+# fill_dates_for_historic_data()
 
 # MAKE DATAHANDLING.PY INTO CLASS WITH TOOL METHODS???
