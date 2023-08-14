@@ -47,7 +47,7 @@ def call_all_companies(date: str) -> list:
 
     rawData = requests.get(url)
     if rawData.status_code != 200:
-        raise ValueError(f"The given date ({date}) was erroneous")
+        raise ValueError(f"Request failed with status code {rawData.status_code})")
 
     rawData = rawData.json()
 
