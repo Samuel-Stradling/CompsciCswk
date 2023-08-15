@@ -61,6 +61,36 @@ def call_all_companies(date: str) -> list:
 
     return companySortedData
 
+def add_missing_dates() -> int:
+    from datetime import datetime, timedelta
+    yesterday = (datetime.now() - timedelta(days=1)).date()
+
+    try:
+        conn = sqlite3.connect("data\main.sql")
+        cursor = conn.cursor()
+        cursor.execute("SELECT MAX(date) AS latestDate FROM DateStatuses")
+        latestDate = datetime.strptime(cursor.fetchone()[0], "%Y-%m-%d").date()
+
+        if latestDate != yesterday:
+            workingDate = latestDate + timedelta(days=1)
+            while workingDate <= yesterday:
+                cursor.execute("INSERT INTO DateStatuses (date, complete_data, market_open) VALUES (?, ?, ?)", (str(workingDate), False, True))
+                workingDate += timedelta(days=1)
+            conn.commit()
+
+
+    except sqlite3.Error as error:
+        print("Error: {}".format(error))
+        return -1
+
+    finally:
+        # Close the cursor and connection
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+        return 0
+
 
 def find_last_full_date() -> str:
     try:
@@ -70,12 +100,10 @@ def find_last_full_date() -> str:
             "SELECT MIN(date) AS oldestCompleteDate FROM DateStatuses WHERE complete_data = true;"
         )
         result = cursor.fetchone()
-        
+
         if result[0] == None:
             cursor.execute("SELECT MIN(date) AS oldestCompleteDate FROM DateStatuses")
             result = cursor.fetchone()
-
-        print(result)
 
     except sqlite3.Error as error:
         print("Error: {}".format(error))
@@ -85,10 +113,32 @@ def find_last_full_date() -> str:
             cursor.close()
         if conn:
             conn.close()
+        return result[0]
 
 
 def backfill(lastFullDate: str) -> int:
-    pass
+    import time
+    from datetime import timedelta, datetime
+
+    
+    yesterday = datetime.now() - timedelta(days=1)
+
+    if lastFullDate != yesterday:
+        datesToFill = []
+        startDate = (datetime.strptime(lastFullDate, "%Y-%m-%d")).date()
+        yesterday = (datetime.now() - timedelta(days=1)).date()
+
+        currentDate = startDate
+        while currentDate != yesterday:
+            datesToFill.append(str(currentDate))
+            currentDate += timedelta(days=1)
+        datesToFill.append(str(yesterday))
+
+       
+    for date in datesToFill:
+        print(date)
+            
 
 
-find_last_full_date()
+# backfill(find_last_full_date())
+add_missing_dates()
