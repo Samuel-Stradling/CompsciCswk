@@ -1,5 +1,7 @@
 import sqlite3
 
+# this is an intialisation file. It is not very pleasant, but it gets the job done, and only really needs to be done once. This can be 
+# considered more of a devtools file
 
 def init_all():
     # creates database if doesn't exist
@@ -120,7 +122,7 @@ def fill_dates_for_historic_data():
 
         except sqlite3.Error as error:
             print("Error: {}".format(error))
-            
+
         finally:
             if cursor:
                 cursor.close()
