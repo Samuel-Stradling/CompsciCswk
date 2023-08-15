@@ -105,22 +105,6 @@ def check_historic_data():
 
 
 def fill_dates_for_historic_data():
-    # import sys
-    # sys.path.insert(
-    #     1, 'C:\\Users\Sam\\Documents\\Programming\\CompsciCswk\\api\\')
-
-    # from dataHandling import call_all_companies
-
-    # conn = sqlite3.connect('data\main.sql')
-    # cursor = conn.cursor()
-    # while dateIterator <= yesterdayDate:
-
-    #         cursor.execute(
-    #             "INSERT INTO DateStatuses (date, complete_data, market_open) VALUES (?, ?, ?)", (str(dateIterator.date()), True, True))
-
-    #     conn.commit()
-    # cursor.close()
-    # conn.close()
     with open("database-handling\\baselineDatesForInit.txt", "r") as dateFile:
         dates = list(reversed(dateFile.readlines()))
         dates = [date.strip() for date in dates]
@@ -133,10 +117,11 @@ def fill_dates_for_historic_data():
                     (date, False, True),
                 )
             conn.commit()
+
         except sqlite3.Error as error:
             print("Error: {}".format(error))
+            
         finally:
-            # Close the cursor and connection
             if cursor:
                 cursor.close()
             if conn:
