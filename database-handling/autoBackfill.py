@@ -52,7 +52,9 @@ def call_all_companies(date: str) -> list:
 
     counter = 0
     companySortedData = [date]
-    while counter < len(rawData["results"]): # raw data is a json where the value of the results key is a list of dictionaries, each holding data for distinct companies, hence this cleansing
+    while counter < len(
+        rawData["results"]
+    ):  # raw data is a json where the value of the results key is a list of dictionaries, each holding data for distinct companies, hence this cleansing
         subDictionary = rawData["results"][counter]
         if (
             subDictionary["T"] in company_dictionary
@@ -63,7 +65,7 @@ def call_all_companies(date: str) -> list:
     return companySortedData
 
 
-def add_missing_dates() -> int:
+def add_missing_dates():
     """adds missing dates to the datestatuses table in the database"""
     from datetime import datetime, timedelta
 
@@ -87,7 +89,6 @@ def add_missing_dates() -> int:
 
     except sqlite3.Error as error:
         print("Error: {}".format(error))
-        return -1
 
     finally:
         # Close the cursor and connection
@@ -95,7 +96,6 @@ def add_missing_dates() -> int:
             cursor.close()
         if conn:
             conn.close()
-        return 0
 
 
 def find_last_full_date() -> str:
