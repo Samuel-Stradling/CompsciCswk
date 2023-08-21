@@ -175,7 +175,24 @@ def find_last_full_date() -> str:
 
 
 def insert_data_into_stockprices(data: list):
-    """inserts data returned from call_all_companies into the stockprices table"""
+    """
+    Inserts data returned from call_all_companies into the stockprices table.
+
+    This function takes a list of dictionaries containing stock price data for multiple
+    companies and inserts this data into a SQLite database table named 'StockPrices'.
+
+    Parameters:
+        data (list): A list of dictionaries containing stock price data for each company in the following format: ['2023-08-20', {...company_data...}, {...company_data...}, ...]
+
+    Returns:
+        None.
+
+    Raises:
+        sqlite3.Error: If there is an error while executing the database insertion query.
+
+    Dependencies:
+        - Assumes a connection to an SQLite database named "main.sql" stored with a local path of "data/main.sql"
+    """
     try:
         conn = sqlite3.connect("data\main.sql")
         cursor = conn.cursor()
@@ -186,11 +203,11 @@ def insert_data_into_stockprices(data: list):
             insertArgs = (
                 company["T"],
                 date,
-                company["o"],
-                company["c"],
-                company["h"],
-                company["v"],
-                company["vw"],
+                company["o"],  # open
+                company["c"],  # close
+                company["h"],  # high
+                company["v"],  # volume traded
+                company["vw"],  # weighted volume
             )
             cursor.execute(
                 "INSERT INTO StockPrices (ticker, date, open, close, high, volume, weighted_volume) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -200,7 +217,6 @@ def insert_data_into_stockprices(data: list):
 
     except sqlite3.Error as error:
         print("Error: {}".format(error))
-        return -1
 
     finally:
         # Close the cursor and connection
@@ -208,7 +224,6 @@ def insert_data_into_stockprices(data: list):
             cursor.close()
         if conn:
             conn.close()
-        return 0
 
 
 def update_date_statuses(date: str):
