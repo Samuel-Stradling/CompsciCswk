@@ -190,11 +190,8 @@ def backfill(lastFullDate: str) -> int:
         except ValueError:
             update_date_statuses(date)
             print(date)
-        except ConnectionError:
-            print(date, "not working for some reason")
-            continue
 
-
+add_missing_dates()
 backfill(find_last_full_date())
 # backfill("2023-08-17")
 # insert_data_into_stockprices(call_all_companies("2023-08-17"))
