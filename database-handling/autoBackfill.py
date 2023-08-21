@@ -2,7 +2,34 @@ import sqlite3
 
 
 def call_all_companies(date: str) -> list:
-    """calls all companies and returns a list where the first element is the date"""
+    """
+    Fetches aggregated financial data for selected companies from the Polygon API and returns a list.
+
+    This function retrieves historical aggregated financial data for specific companies
+    based on the provided date. The function utilizes the Polygon API to gather data
+    on stock prices, volumes, and other metrics.
+
+    Parameters:
+        date (str): The date for which financial data is to be fetched in the 'YYYY-MM-DD' format.
+
+    Returns:
+        list: A list containing financial data for the specified date. The first element
+        in the list is the input date, followed by dictionaries containing aggregated data
+        for selected companies. Each dictionary includes information such as stock symbol,
+        stock prices, volumes, and other relevant metrics.
+
+    Raises:
+        ConnectionError: If the API request to Polygon fails with a non-200 status code.
+        ValueError: If no data is available for the provided date or if the market was closed.
+
+    Dependencies:
+        - This function requires the 'os', 'requests', 'dotenv', and 'companies' (this is a local module containing a dictionary of all of the stored companies and their acronyms) modules.
+        - The API token should be set as an environment variable named "api-token" using dotenv.
+
+    Example:
+        >>> call_all_companies("2023-08-20")
+        ['2023-08-20', {...company_data...}, {...company_data...}, ...]
+    """
 
     import os
     import requests
@@ -25,7 +52,7 @@ def call_all_companies(date: str) -> list:
 
     counter = 0
     companySortedData = [date]
-    while counter < len(rawData["results"]):
+    while counter < len(rawData["results"]): # raw data is a json where the value of the results key is a list of dictionaries, each holding data for distinct companies, hence this cleansing
         subDictionary = rawData["results"][counter]
         if (
             subDictionary["T"] in company_dictionary
@@ -43,7 +70,7 @@ def add_missing_dates() -> int:
     yesterday = (datetime.now() - timedelta(days=1)).date()
 
     try:
-        conn = sqlite3.connect("data/main.sql")
+        conn = sqlite3.connect("data\main.sql")
         cursor = conn.cursor()
         cursor.execute("SELECT MAX(date) AS latestDate FROM DateStatuses")
         latestDate = datetime.strptime(cursor.fetchone()[0], "%Y-%m-%d").date()
@@ -74,7 +101,7 @@ def add_missing_dates() -> int:
 def find_last_full_date() -> str:
     """finds the last date with a full set of data"""
     try:
-        conn = sqlite3.connect("data/main.sql")
+        conn = sqlite3.connect("data\main.sql")
         cursor = conn.cursor()
         cursor.execute(
             "SELECT MAX(date) AS oldestCompleteDate FROM DateStatuses WHERE complete_data = true;"
@@ -99,7 +126,7 @@ def find_last_full_date() -> str:
 def insert_data_into_stockprices(data: list):
     """inserts data returned from call_all_companies into the stockprices table"""
     try:
-        conn = sqlite3.connect("data/main.sql")
+        conn = sqlite3.connect("data\main.sql")
         cursor = conn.cursor()
         date = data[0]
         for company in data:
@@ -131,20 +158,25 @@ def insert_data_into_stockprices(data: list):
         if conn:
             conn.close()
         return 0
-    
+
+
 def update_date_statuses(date: str):
     """updates the date status table based on the stockprices table"""
     try:
-        conn = sqlite3.connect("data/main.sql")
+        conn = sqlite3.connect("data\main.sql")
         cursor = conn.cursor()
 
         cursor.execute("SELECT COUNT(*) FROM StockPrices WHERE date = ?", (date,))
         count = cursor.fetchone()[0]
-        if count >= 90: # IDK WHY SOME OF THE RESPONSES DO NOT HAVE ALL COUNTRIES??
-            cursor.execute("UPDATE DateStatuses SET complete_data = ? WHERE date = ?", (True, date))
+        if count >= 90:  # IDK WHY SOME OF THE RESPONSES DO NOT HAVE ALL COMPANIES??
+            cursor.execute(
+                "UPDATE DateStatuses SET complete_data = ? WHERE date = ?", (True, date)
+            )
         else:
-            cursor.execute("UPDATE DateStatuses SET market_open = ? WHERE date = ?", (False, date))
-        
+            cursor.execute(
+                "UPDATE DateStatuses SET market_open = ? WHERE date = ?", (False, date)
+            )
+
         conn.commit()
 
     except sqlite3.Error as error:
@@ -165,12 +197,13 @@ def backfill(lastFullDate: str) -> int:
     import time
     from datetime import timedelta, datetime
 
-
     yesterday = datetime.now() - timedelta(days=1)
 
     if lastFullDate != yesterday:
         datesToFill = []
-        startDate = (datetime.strptime(lastFullDate, "%Y-%m-%d") + timedelta(days=1)).date()
+        startDate = (
+            datetime.strptime(lastFullDate, "%Y-%m-%d") + timedelta(days=1)
+        ).date()
         yesterday = (datetime.now() - timedelta(days=1)).date()
 
         currentDate = startDate
@@ -183,13 +216,14 @@ def backfill(lastFullDate: str) -> int:
         try:
             time.sleep(12)
             data = call_all_companies(date)
-            print("item count:", len(data)-1)
+            print("item count:", len(data) - 1)
             insert_data_into_stockprices(data)
             update_date_statuses(date)
             print(date)
         except ValueError:
             update_date_statuses(date)
             print(date)
+
 
 add_missing_dates()
 backfill(find_last_full_date())
