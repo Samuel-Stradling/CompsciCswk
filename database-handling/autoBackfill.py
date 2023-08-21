@@ -77,7 +77,7 @@ def add_missing_dates():
         None
 
     Raises:
-        None. It catches any errors from the database and prints the error message.
+        sqlite3.Error: If there is an error while executing the database query.
 
     Dependencies:
         - The function requires the 'datetime' and 'sqlite3' modules.
@@ -132,7 +132,23 @@ def add_missing_dates():
 
 
 def find_last_full_date() -> str:
-    """finds the last date with a full set of data"""
+    """
+    Finds the last date with a full set of data from the database.
+
+    Parameters:
+        None
+
+    Returns:
+        str: The last date with a full set of data in the format 'YYYY-MM-DD',
+             or None if no data is found.
+
+    Raises:
+        sqlite3.Error: If there is an error while executing the database query.
+
+    Dependencies:
+        - Assumes a connection to an SQLite database named "main.sql" stored with a local path of "data/main.sql"
+    """
+
     try:
         conn = sqlite3.connect("data\main.sql")
         cursor = conn.cursor()
@@ -142,7 +158,9 @@ def find_last_full_date() -> str:
         result = cursor.fetchone()
 
         if result[0] == None:
-            cursor.execute("SELECT MIN(date) AS oldestCompleteDate FROM DateStatuses")
+            cursor.execute(
+                "SELECT MIN(date) AS oldestCompleteDate FROM DateStatuses"
+            )  # if the datestatuses table has been initialised but not updated (remember by default complete_data is false so its possible that no results are yielded from the query)
             result = cursor.fetchone()
 
     except sqlite3.Error as error:
