@@ -227,14 +227,45 @@ def insert_data_into_stockprices(data: list):
 
 
 def update_date_statuses(date: str):
-    """updates the date status table based on the stockprices table"""
+    """
+    Updates the date status table based on the stock prices table.
+
+    This function checks the number of entries for a given date in the StockPrices table
+    and updates the DateStatuses table accordingly. If the count is greater than or equal
+    to 90, it sets the 'complete_data' field to True. Otherwise, it sets the 'market_open'
+    field to False.
+
+    Parameters:
+        date (str): The date for which to update the status in the DateStatuses table.
+
+    Returns:
+        None
+
+    Raises:
+        sqlite3.Error: If there is an error while working with the SQLite database.
+
+    Dependencies:
+        - This function requires the sqlite3 library to be imported.
+
+    Note:
+        - The list of companies stored is not always available in the data, but the function
+          still operates based on the count of entries.
+
+    Example:
+        update_date_statuses("2023-08-21")
+    """
+
     try:
         conn = sqlite3.connect("data\main.sql")
         cursor = conn.cursor()
 
-        cursor.execute("SELECT COUNT(*) FROM StockPrices WHERE date = ?", (date,))
+        cursor.execute(
+            "SELECT COUNT(*) FROM StockPrices WHERE date = ?", (date,)
+        )  # select number of entries for a particular date
         count = cursor.fetchone()[0]
-        if count >= 90:  # IDK WHY SOME OF THE RESPONSES DO NOT HAVE ALL COMPANIES??
+        if (
+            count >= 90
+        ):  # note that the list of companies stored is not always available in the data, however we only drop to 97 companies returned from 101
             cursor.execute(
                 "UPDATE DateStatuses SET complete_data = ? WHERE date = ?", (True, date)
             )
@@ -247,7 +278,6 @@ def update_date_statuses(date: str):
 
     except sqlite3.Error as error:
         print("Error: {}".format(error))
-        return -1
 
     finally:
         # Close the cursor and connection
@@ -255,7 +285,6 @@ def update_date_statuses(date: str):
             cursor.close()
         if conn:
             conn.close()
-        return 0
 
 
 def backfill(lastFullDate: str) -> int:
