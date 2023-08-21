@@ -66,7 +66,32 @@ def call_all_companies(date: str) -> list:
 
 
 def add_missing_dates():
-    """adds missing dates to the datestatuses table in the database"""
+    """
+    Adds missing dates to the 'DateStatuses' table in the database.
+
+    This function calculates the missing dates between the latest date recorded in
+    the 'DateStatuses' table and yesterday's date. It then inserts records for these
+    missing dates with default values into the table.
+
+    Parameters:
+        None
+
+    Raises:
+        None. It catches any errors from the database and prints the error message.
+
+    Dependencies:
+        - The function requires the 'datetime' and 'sqlite3' modules.
+        - Assumes a connection to an SQLite database named "main.sql" stored with a local path of "data/main.sql"
+
+    Note:
+        - This function assumes that the 'DateStatuses' table has columns 'date',
+          'complete_data', and 'market_open'.
+
+    Example:
+        >>> add_missing_dates_to_database()
+        # Adds missing dates between the latest recorded date and yesterday's date to the database.
+    """
+
     from datetime import datetime, timedelta
 
     yesterday = (datetime.now() - timedelta(days=1)).date()
@@ -75,14 +100,22 @@ def add_missing_dates():
         conn = sqlite3.connect("data\main.sql")
         cursor = conn.cursor()
         cursor.execute("SELECT MAX(date) AS latestDate FROM DateStatuses")
-        latestDate = datetime.strptime(cursor.fetchone()[0], "%Y-%m-%d").date()
+        latestDate = datetime.strptime(
+            cursor.fetchone()[0], "%Y-%m-%d"
+        ).date()  # converts string to datetime
 
         if latestDate != yesterday:
-            workingDate = latestDate + timedelta(days=1)
+            workingDate = latestDate + timedelta(
+                days=1
+            )  # latest date is already full, so we need to start from the next date along
             while workingDate <= yesterday:
                 cursor.execute(
                     "INSERT INTO DateStatuses (date, complete_data, market_open) VALUES (?, ?, ?)",
-                    (str(workingDate), False, True),
+                    (
+                        str(workingDate),
+                        False,
+                        True,
+                    ),  # default values for new dates is always False for complete_data, and True for market_open
                 )
                 workingDate += timedelta(days=1)
             conn.commit()
