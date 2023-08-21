@@ -288,7 +288,28 @@ def update_date_statuses(date: str):
 
 
 def backfill(lastFullDate: str) -> int:
-    """responsible for controlling all of the backfilling"""
+    """
+    Controls the backfilling process for stock data.
+
+    This function uses all of the other functions in autoBackfill.py, and essentially acts as a master controller function, actually responsible
+    for corroborating all of the data into all of the right places
+
+    Parameters:
+        lastFullDate (str): The most recent date with a full set of data.
+
+    Returns:
+        int: The count of dates processed and accounted for during the backfill.
+    
+    Raises:
+        ValueError: when the length of the query returned from the api is 0, indicating that the market was closed. This exception is caught and handled.
+
+    Dependencies:
+        - This function uses the 'time' and 'datetime' modules.
+
+    Example:
+        backfill("2023-08-19")
+        backfill(find_last_full_date())
+    """
     import time
     from datetime import timedelta, datetime
 
@@ -298,7 +319,7 @@ def backfill(lastFullDate: str) -> int:
         datesToFill = []
         startDate = (
             datetime.strptime(lastFullDate, "%Y-%m-%d") + timedelta(days=1)
-        ).date()
+        ).date() # the last full date has data, hence the start date is one day after the last full date
         yesterday = (datetime.now() - timedelta(days=1)).date()
 
         currentDate = startDate
@@ -306,25 +327,29 @@ def backfill(lastFullDate: str) -> int:
             datesToFill.append(str(currentDate))
             currentDate += timedelta(days=1)
         datesToFill.append(str(yesterday))
+    
+    count = 0
 
     for date in datesToFill:
         try:
-            time.sleep(12)
+            time.sleep(12) # the free api plan stipulates a max of 5 calls per min. This ensures that the limit is never possibly exceeded
+
             data = call_all_companies(date)
-            print("item count:", len(data) - 1)
-            insert_data_into_stockprices(data)
-            update_date_statuses(date)
-            print(date)
-        except ValueError:
-            update_date_statuses(date)
-            print(date)
+
+            print("item count:", len(data) - 1) # prints number of companies returned (the -1 is because the first value of data is the date)
+
+            insert_data_into_stockprices(data) # inserts the data into the stockprices table
+
+            update_date_statuses(date) # updates the dateStatuses table accordingly
+
+            print(date, "\n") # prints date to indicate that it is accounted for
+            count += 1
+
+        except ValueError: # this is raised from call_all_companies, and happens when the length of the query returned from the api is 0 = the market was closed
+            update_date_statuses(date) # the dateStatuses table is updated accordingly
+            print(date)# prints date to indicate that it is accounted for
+            count += 1 
+    return count
 
 
-add_missing_dates()
 backfill(find_last_full_date())
-# backfill("2023-08-17")
-# insert_data_into_stockprices(call_all_companies("2023-08-17"))
-# update_date_statuses("2023-08-17")
-
-
-# add_missing_dates()
