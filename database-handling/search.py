@@ -148,11 +148,62 @@ def search_by_date_and_company(company: str, date: str) -> float | dict:
             conn.close()
 
 
-print(search_by_date_and_company("CSCO", "2023-09-06"))
-
 
 def search_by_metrics():
     # these results need to be saved locally in txt
+
+    # LOW PRIORITY
+
+    # metrics to search by: 
+#     Stock Price Metrics:
+
+# Closing Price: Allow users to search for companies based on their closing stock prices on specific dates.
+# Opening Price: Similar to closing price but for the opening price.
+# High and Low Prices: Users can search for companies based on the highest and lowest stock prices on specific dates.
+# Volume: Provide the ability to search for companies based on their trading volume on specific dates.
+# Market Capitalization Metrics:
+
+# Market Cap: Users can search for companies based on their market capitalization, which is the total market value of their outstanding shares.
+# Financial Ratios:
+
+# Price-to-Earnings (P/E) Ratio: Allow users to search for companies with specific P/E ratios, which can indicate a company's valuation relative to its earnings.
+# Price-to-Sales (P/S) Ratio: Similar to P/E ratio but based on revenue.
+# Price-to-Book (P/B) Ratio: Indicate a company's valuation relative to its book value.
+# Dividend Yield: Users can search for companies with specific dividend yields, which is the dividend income relative to the stock price.
+# Performance Metrics:
+
+# Return on Investment (ROI): Users may want to search for companies based on their historical ROI over specific periods.
+# Earnings per Share (EPS): Allow users to search for companies with specific EPS values.
+# Revenue Growth: Provide the ability to search for companies based on their revenue growth rates.
+# Market Index Metrics:
+
+# Comparison to Market Indices: Users can search for companies that outperformed or underperformed market indices like the S&P 500.
+# Technical Indicators:
+
+# Moving Averages: Allow users to search for companies that have recently crossed specific moving average lines.
+# Relative Strength Index (RSI): Users can search for companies based on their RSI values, indicating overbought or oversold conditions.
+# Volatility Metrics:
+
+# Historical Volatility: Users may want to search for companies with specific historical volatility levels.
+# Implied Volatility: Search for companies with specific implied volatility levels for options trading.
+# Fundamental Metrics:
+
+# Debt-to-Equity Ratio: Users can search for companies with specific debt-to-equity ratios, indicating their financial leverage.
+# Profit Margin: Allow users to search for companies with specific profit margin percentages.
+# Dividend Metrics:
+
+# Dividend History: Users can search for companies with specific dividend payment histories or dividend growth rates.
+# Economic Indicators:
+
+# Interest Rates: Allow users to search for companies in specific interest rate environments.
+# Sector and Industry Metrics:
+
+# Sector Performance: Users can search for companies within specific sectors or industries.
+# Industry Metrics: Provide industry-specific metrics such as same-store sales growth for retail companies.
+# Custom Metrics:
+
+# Allow users to define custom metrics or combinations of metrics to search for companies that meet their specific criteria.
+# Adding these metrics to your search functionality will make your finance app more versatile and useful for a wide range of investors and traders who have different investment strategies and preferences.
     pass
 
 
