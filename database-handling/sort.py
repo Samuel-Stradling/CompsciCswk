@@ -16,30 +16,46 @@ class SortItems:
     ):
         self.sortMethod = sortMethod
         self.startDate = startDate
-        self.endDate = endDate
         self.sortMetric = sortMetric
+        self.endDate = endDate
+        self.today = str(datetime.today().date())
         try:
-            self.conn = sqlite3.connect("data/main.sql")
+            self.conn = sqlite3.connect("data\\main.sql")
             self.cursor = self.conn.cursor()
         except:
             raise ConnectionError("Unable to open database at the specified path")
+        self.check_date_validity()
         self.select_values(self.select_dates())
 
     values = []
 
+    def check_date_validity(self):
+        if self.endDate == self.today:  # if the end date is set to the current date
+            self.endDate = str((datetime.today() - timedelta(days=1)).date())
+        elif not (
+            datetime.strptime(self.startDate, "%Y-%m-%d")
+            < datetime.strptime(self.endDate, "%Y-%m-%d") # start date must be before end date
+            and datetime.strptime(self.endDate, "%Y-%m-%d")
+            <= datetime.strptime(self.today, "%Y-%m-%d") # and end date must be before or equal to today
+        ):
+            raise ValueError("The entered dates were not valid")
+
     def select_dates(self):
         dates = []
-        workingDate = self.startDate # a copy of startDate is automatically made here, so no need for manual copy
+        workingDate = (
+            self.startDate
+        )  # a copy of startDate is automatically made here, so no need for manual copy
         workingDate = datetime.strptime(workingDate, "%Y-%m-%d").date()
-        while str(workingDate) != self.endDate:
+        while str(workingDate) != str(
+            (datetime.strptime(self.endDate, "%Y-%m-%d") + timedelta(days=1)).date()
+        ):
             dates.append(str(workingDate))
             workingDate = workingDate + timedelta(days=1)
         return dates
-    
-    def select_values(dates):
-        pass
+
+    def select_values(self, dates):
+        for date in dates:
+            print(date)
 
 
-
-
-sorter = SortItems("bubble", "price", "2022-08-09", "2022-09-09")
+sorter = SortItems("bubble", "price", "2023-08-29", "2023-09-05")
