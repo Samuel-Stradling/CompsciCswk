@@ -28,7 +28,7 @@ class SortItems:
         self.__check_sort_metric()
 
         try:
-            self.conn = sqlite3.connect("data\\main.sql")
+            self.conn = sqlite3.connect("data/main.sql")
             self.cursor = self.conn.cursor()
         except:
             raise ConnectionError("Unable to open database at the specified path")
@@ -42,7 +42,7 @@ class SortItems:
         if self.sortMethod.lower() not in sortMethods: raise ValueError("Invalid sort method")
 
     def __check_sort_metric(self):
-        sortMetrics = ["price", "high", "close", "open", "volume", "weighted_volume"]
+        sortMetrics = ["high", "close", "open", "volume", "weighted_volume"]
         if self.sortMetric.lower() not in sortMetrics: raise ValueError("Invalid sort metric")
 
     def __check_date_validity(self):
@@ -72,11 +72,32 @@ class SortItems:
 
     def __select_values(self, dates):
         for date in dates:
-            self.conn.execute("SELECT ")
+            
+            if self.sortMetric == "open":
+                self.cursor.execute("SELECT open, ticker FROM StockPrices WHERE date = ?", (date,))
 
-            self.values.append({"date": date, "ticker": ticker, self.sortMetric: valueToSortBy })
+            elif self.sortMetric == "close":
+                self.cursor.execute("SELECT close, ticker FROM StockPrices WHERE date = ?", (date,))
+
+            elif self.sortMetric == "high":
+                self.cursor.execute("SELECT high, ticker FROM StockPrices WHERE date = ?", (date,))
+
+            elif self.sortMetric == "volume":
+                self.cursor.execute("SELECT volume, ticker FROM StockPrices WHERE date = ?", (date,))
+
+            elif self.sortMetric == "weighted_volume":
+                self.cursor.execute("SELECT weighted_volume, ticker FROM StockPrices WHERE date = ?", (date,))
+            
+            result = self.cursor.fetchall()
+            count = 0
+            if result == []:
+                self.values.append(f"Data not available for {date}")
+            while count < len(result):
+                self.values.append({"date": date, "ticker": result[count][1], self.sortMetric: result[count][0]})
+                count += 1
 
 
+        print(self.values)
 
 
 
@@ -87,4 +108,4 @@ class SortItems:
         self.conn.close()
 
 
-sorter = SortItems(sortMethod="bubble", sortMetric="price", startDate="2023-08-29", endDate="2023-09-05")
+sorter = SortItems(sortMethod="bubble", sortMetric="volume", startDate="2023-09-08", endDate="2023-09-12")
