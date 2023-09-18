@@ -73,6 +73,7 @@ class SortItems:
     def __select_values(self, dates):
         for date in dates:
             
+            # this is done like this because I was not able to set variable select parameters
             if self.sortMetric == "open":
                 self.cursor.execute("SELECT open, ticker FROM StockPrices WHERE date = ?", (date,))
 
@@ -93,19 +94,22 @@ class SortItems:
             if result == []:
                 self.values.append(f"Data not available for {date}")
             while count < len(result):
-                self.values.append({"date": date, "ticker": result[count][1], self.sortMetric: result[count][0]})
+                if "Data not available" not in result[count]:
+                    self.values.append({"date": date, "ticker": result[count][1], self.sortMetric: result[count][0]})
                 count += 1
 
-
-        print(self.values)
-
-
-
         self.conn.commit()
-
-
         self.cursor.close()
         self.conn.close()
 
+    def bubble_sort(self):
+        pass
+    def merge_sort(self):
+        pass
+    def quick_sort(self):
+        pass
+    def heap_sort(self):
+        pass
 
-sorter = SortItems(sortMethod="bubble", sortMetric="volume", startDate="2023-09-08", endDate="2023-09-12")
+
+sorter = SortItems(sortMethod="bubble", sortMetric="volume", startDate="2023-09-07", endDate="2023-09-12")
