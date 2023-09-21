@@ -39,6 +39,7 @@ def call_all_companies(date: str) -> list:
     load_dotenv()
     api_key = os.environ.get("api-token")
 
+
     url = f"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date}?adjusted=true&apiKey={api_key}"
 
     rawData = requests.get(url)
@@ -97,7 +98,7 @@ def add_missing_dates():
     yesterday = (datetime.now() - timedelta(days=1)).date()
 
     try:
-        conn = sqlite3.connect("data\main.sql")
+        conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
         cursor.execute("SELECT MAX(date) AS latestDate FROM DateStatuses")
         latestDate = datetime.strptime(
@@ -150,7 +151,7 @@ def find_last_full_date() -> str:
     """
 
     try:
-        conn = sqlite3.connect("data\main.sql")
+        conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
         cursor.execute(
             "SELECT MAX(date) AS oldestCompleteDate FROM DateStatuses WHERE complete_data = true;"
@@ -194,7 +195,7 @@ def insert_data_into_stockprices(data: list):
         - Assumes a connection to an SQLite database named "main.sql" stored with a local path of "data/main.sql"
     """
     try:
-        conn = sqlite3.connect("data\main.sql")
+        conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
         date = data[0]
         for company in data:
@@ -256,7 +257,7 @@ def update_date_statuses(date: str):
     """
 
     try:
-        conn = sqlite3.connect("data\main.sql")
+        conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
 
         cursor.execute(
@@ -320,7 +321,7 @@ def backfill(lastFullDate: str) -> int:
         startDate = (
             datetime.strptime(lastFullDate, "%Y-%m-%d") + timedelta(days=1)
         ).date() # the last full date has data, hence the start date is one day after the last full date
-        yesterday = (datetime.now() - timedelta(days=1)).date()
+        yesterday = yesterday.date()
 
         currentDate = startDate
         while currentDate != yesterday:
@@ -351,5 +352,5 @@ def backfill(lastFullDate: str) -> int:
             count += 1 
     return count
 
-
+add_missing_dates()
 backfill(find_last_full_date())
