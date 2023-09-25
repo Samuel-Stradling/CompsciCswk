@@ -137,21 +137,22 @@ class SortItems:
     def bubble_sort(self):
         # checker = sorted(self.values, key=lambda x: x[self.sortMetric])
 
+        values = self.values[:]  # copy of self.values
+
         swapMade = True
         while swapMade:
             swapMade = False
             index = 0
-            while index != len(self.values) - 1:
-                if (
-                    self.values[index][self.sortMetric]
-                    > self.values[index + 1][self.sortMetric]
-                ):
-                    temp = self.values[index + 1]
-                    self.values[index + 1] = self.values[index]
-                    self.values[index] = temp
+            while index != len(values) - 1:
+                if values[index][self.sortMetric] > values[index + 1][self.sortMetric]:
+                    temp = values[index + 1]
+                    values[index + 1] = values[index]
+                    values[index] = temp
                     swapMade = True
 
                 index += 1
+
+        return values
 
         # if self.values == checker:
         #     print("worked")
@@ -175,7 +176,6 @@ class SortItems:
                         newList.append(remaining)
                     return newList
 
-
                 if leftSubList[0][sortMetric] < rightSubList[0][sortMetric]:
                     newList.append(leftSubList.pop(0))
                 elif leftSubList[0][sortMetric] > rightSubList[0][sortMetric]:
@@ -187,31 +187,35 @@ class SortItems:
             return newList
 
         def controller(sortMetric, toBeSorted):
-
-
-            newList =[]
+            newList = []
 
             if len(toBeSorted) % 2 != 0:
-                #odd number of items
+                # odd number of items
                 index = 0
-                while not (len(newList) == len(toBeSorted)//2 + 1):
-                    newList.append(merge([toBeSorted[index], toBeSorted[index+1]], sortMetric))
+                while not (len(newList) == len(toBeSorted) // 2 + 1):
+                    newList.append(
+                        merge([toBeSorted[index], toBeSorted[index + 1]], sortMetric)
+                    )
                     if index + 2 != len(toBeSorted) - 1:
-                        #if end of list not reached
+                        # if end of list not reached
                         index += 2
                     else:
-                        newList.append(toBeSorted[index+2]) #append the remaining value
+                        newList.append(
+                            toBeSorted[index + 2]
+                        )  # append the remaining value
                 return newList
 
             else:
                 # even values in list path
                 index = 0
-                while not (len(newList) == len(toBeSorted)/2):
-                    newList.append(merge([toBeSorted[index], toBeSorted[index+1]], sortMetric))
+                while not (len(newList) == len(toBeSorted) / 2):
+                    newList.append(
+                        merge([toBeSorted[index], toBeSorted[index + 1]], sortMetric)
+                    )
                     if index + 2 != len(toBeSorted) - 1:
                         index += 2
                     else:
-                        newList.append(toBeSorted[index+2])
+                        newList.append(toBeSorted[index + 2])
                 return newList
 
         values = [[x] for x in self.values]
@@ -219,14 +223,6 @@ class SortItems:
             values = controller(self.sortMetric, values)
 
         return values[0]
-
-
-
-
-    
-        
-
-        
 
     def quick_sort(self):
         pass
@@ -241,7 +237,4 @@ sorter = SortItems(
     startDate="2023-09-11",
     endDate="2023-09-13",
 )
-for value in sorter.merge_sort():
-    print(value)
-
-
+sorter.bubble_sort()
