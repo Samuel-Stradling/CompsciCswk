@@ -47,7 +47,7 @@ class SortItems:
 
     def __check_date_validity(self):
         if self.endDate == self.today:  # if the end date is set to the current date
-            self.endDate = str((datetime.today() - timedelta(days=1)).date())
+            self.endDate = str((datetime.today() - timedelta(days=1)).date()) # set end date to yesterday
 
         elif not (
             datetime.strptime(self.startDate, "%Y-%m-%d")
@@ -71,6 +71,16 @@ class SortItems:
         return dates
 
     def __select_values(self, dates):
+        """Standard format:
+        [
+            {date:yyyy-mm-dd, ticker:aaaa, SORTMETRIC:...},
+            {date:yyyy-mm-dd, ticker:aaaa, SORTMETRIC:...},
+            ...
+        ]
+        Note: if market closed on a day, instead of a dictionary, a string "data not available for yyyy-mm-dd"
+        
+        """
+
         for date in dates:
             
             # this is done like this because I was not able to set variable select parameters
@@ -112,4 +122,4 @@ class SortItems:
         pass
 
 
-sorter = SortItems(sortMethod="bubble", sortMetric="volume", startDate="2023-09-07", endDate="2023-09-12")
+sorter = SortItems(sortMethod="bubble", sortMetric="volume", startDate="2023-09-11", endDate="2023-09-13")
