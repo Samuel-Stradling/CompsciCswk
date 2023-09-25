@@ -113,7 +113,28 @@ class SortItems:
         self.conn.close()
 
     def bubble_sort(self):
-        pass
+        
+        # checker = sorted(self.values, key=lambda x: x[self.sortMetric])
+
+        swapMade = True
+        while swapMade:
+            swapMade = False
+            index = 0
+            while index != len(self.values) - 1:
+                if self.values[index][self.sortMetric] > self.values[index+1][self.sortMetric]:
+                    temp = self.values[index+1]
+                    self.values[index+1] = self.values[index]
+                    self.values[index] = temp
+                    swapMade = True
+
+                index +=1
+
+        # if self.values == checker:
+        #     print("worked")
+
+
+
+        
     def merge_sort(self):
         pass
     def quick_sort(self):
@@ -123,3 +144,5 @@ class SortItems:
 
 
 sorter = SortItems(sortMethod="bubble", sortMetric="volume", startDate="2023-09-11", endDate="2023-09-13")
+sorter.bubble_sort()
+
