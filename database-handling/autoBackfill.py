@@ -306,6 +306,7 @@ def backfill(lastFullDate: str) -> int:
 
     Dependencies:
         - This function uses the 'time' and 'datetime' modules.
+        - This function uses the 'add_missing_dates' procedure.
 
     Example:
         backfill("2023-08-19")
@@ -313,6 +314,8 @@ def backfill(lastFullDate: str) -> int:
     """
     import time
     from datetime import timedelta, datetime
+
+    add_missing_dates()
 
     yesterday = datetime.now() - timedelta(days=1)
 
@@ -352,5 +355,4 @@ def backfill(lastFullDate: str) -> int:
             count += 1 
     return count
 
-add_missing_dates()
 backfill(find_last_full_date())
