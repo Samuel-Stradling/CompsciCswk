@@ -39,7 +39,6 @@ def call_all_companies(date: str) -> list:
     load_dotenv()
     api_key = os.environ.get("api-token")
 
-
     url = f"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date}?adjusted=true&apiKey={api_key}"
 
     rawData = requests.get(url)
@@ -288,7 +287,7 @@ def update_date_statuses(date: str):
             conn.close()
 
 
-def backfill(lastFullDate: str) -> int:
+def backfill(lastFullDate: str):
     """
     Controls the backfilling process for stock data.
 
@@ -299,8 +298,8 @@ def backfill(lastFullDate: str) -> int:
         lastFullDate (str): The most recent date with a full set of data.
 
     Returns:
-        int: The count of dates processed and accounted for during the backfill.
-    
+        Does not return anything.
+
     Raises:
         ValueError: when the length of the query returned from the api is 0, indicating that the market was closed. This exception is caught and handled.
 
@@ -323,7 +322,7 @@ def backfill(lastFullDate: str) -> int:
         datesToFill = []
         startDate = (
             datetime.strptime(lastFullDate, "%Y-%m-%d") + timedelta(days=1)
-        ).date() # the last full date has data, hence the start date is one day after the last full date
+        ).date()  # the last full date has data, hence the start date is one day after the last full date
         yesterday = yesterday.date()
 
         currentDate = startDate
@@ -331,28 +330,32 @@ def backfill(lastFullDate: str) -> int:
             datesToFill.append(str(currentDate))
             currentDate += timedelta(days=1)
         datesToFill.append(str(yesterday))
-    
-    count = 0
 
     for date in datesToFill:
         try:
-            time.sleep(12) # the free api plan stipulates a max of 5 calls per min. This ensures that the limit is never possibly exceeded
+            time.sleep(
+                12
+            )  # the free api plan stipulates a max of 5 calls per min. This ensures that the limit is never possibly exceeded
 
             data = call_all_companies(date)
 
-            print("item count:", len(data) - 1) # prints number of companies returned (the -1 is because the first value of data is the date)
+            print(
+                "item count:", len(data) - 1
+            )  # prints number of companies returned (the -1 is because the first value of data is the date)
 
-            insert_data_into_stockprices(data) # inserts the data into the stockprices table
+            insert_data_into_stockprices(
+                data
+            )  # inserts the data into the stockprices table
 
-            update_date_statuses(date) # updates the dateStatuses table accordingly
+            update_date_statuses(date)  # updates the dateStatuses table accordingly
 
-            print(date, "\n") # prints date to indicate that it is accounted for
-            count += 1
+            print(date, "\n")  # prints date to indicate that it is accounted for
 
-        except ValueError: # this is raised from call_all_companies, and happens when the length of the query returned from the api is 0 = the market was closed
-            update_date_statuses(date) # the dateStatuses table is updated accordingly
-            print(date)# prints date to indicate that it is accounted for
-            count += 1 
-    return count
+        except (
+            ValueError
+        ):  # this is raised from call_all_companies, and happens when the length of the query returned from the api is 0 = the market was closed
+            update_date_statuses(date)  # the dateStatuses table is updated accordingly
+            print(date, "\n")  # prints date to indicate that it is accounted for
 
-backfill(find_last_full_date())
+
+print(backfill(find_last_full_date()))
