@@ -358,4 +358,4 @@ def backfill(lastFullDate: str):
             print(date, "\n")  # prints date to indicate that it is accounted for
 
 
-print(backfill(find_last_full_date()))
+backfill(find_last_full_date())
