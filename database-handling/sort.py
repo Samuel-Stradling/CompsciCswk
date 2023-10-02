@@ -12,18 +12,16 @@ class SortItems:
     def __init__(
         self,
         startDate: str,
-        sortMethod: str = "bubble",
         sortMetric: str = "price",
         endDate: str = str(datetime.today().date() - timedelta(days=1)),
     ):
-        self._sortMethod = sortMethod
         self._startDate = startDate
         self._sortMetric = sortMetric
         self._endDate = endDate
         self._today = str(datetime.today().date())
 
         self.__check_date_validity()
-        self.__check_sort_method()
+        # self.__check_sort_method()
         self.__check_sort_metric()
 
         try:
@@ -35,10 +33,6 @@ class SortItems:
         self.__select_values(self.__select_dates())
 
     values = []
-
-    @property
-    def sortMethod(self):
-        return self._sortMethod
     
     @property
     def sortMetric(self):
@@ -55,11 +49,40 @@ class SortItems:
     @property
     def today(self):
         return self._today
+    
+    def __write_results_to_file(self, data: list):
+        import os
+        FolderName = 'database-handling/sort-search-results'
+        FileName = f"{self._today}-{self._sortMetric}.txt"
 
-    def __check_sort_method(self):
-        sortMethods = ["bubble", "merge", "quick", "heap"]
-        if self._sortMethod.lower() not in sortMethods:
-            raise ValueError("Invalid sort method")
+        folderPath = os.path.join(os.getcwd(), FolderName)
+
+
+        filePath = os.path.join(folderPath, FileName)
+        
+        if os.path.exists(filePath):
+            # Append a unique identifier to the filename
+            file_base_name, file_extension = os.path.splitext(FileName)
+            count = 1
+            while os.path.exists(filePath):
+                new_file_name = f"{file_base_name}{count}{file_extension}"
+                filePath = os.path.join(folderPath, new_file_name)
+                count += 1
+                
+
+        with open(filePath, 'w') as file:
+            file.write(f"from {self._startDate} to {self._endDate}")
+            file.write("\n\n")
+            for item in data:
+                file.write(str(item))
+                file.write("\n")
+
+
+
+    # def __check_sort_method(self):
+    #     sortMethods = ["bubble", "merge", "quick", "heap"]
+    #     if self._sortMethod.lower() not in sortMethods:
+    #         raise ValueError("Invalid sort method")
 
     def __check_sort_metric(self):
         sortMetrics = ["high", "close", "open", "volume", "weighted_volume"]
@@ -171,7 +194,8 @@ class SortItems:
                     swapMade = True
 
                 index += 1
-
+        
+        self.__write_results_to_file(values)
         return values
 
         # if self.values == checker:
@@ -241,7 +265,8 @@ class SortItems:
         values = [[x] for x in self.values]
         while len(values[0]) != len(self.values):
             values = controller(self._sortMetric, values)
-
+        
+        self.__write_results_to_file(values[0])
         return values[0]
 
     def quick_sort(self):
@@ -254,11 +279,13 @@ class SortItems:
 
 
 sorter = SortItems(
-    sortMethod="bubble",
     sortMetric="high",
     startDate="2023-09-11",
     endDate="2023-09-13",
 )
+sorter.bubble_sort()
+sorter.merge_sort()
+
 # for item in sorter.bubble_sort():
 #     print(item)
 # print(sorter.sortMethod)
