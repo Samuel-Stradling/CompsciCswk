@@ -16,11 +16,11 @@ class SortItems:
         sortMetric: str = "price",
         endDate: str = str(datetime.today().date() - timedelta(days=1)),
     ):
-        self.sortMethod = sortMethod
-        self.startDate = startDate
-        self.sortMetric = sortMetric
-        self.endDate = endDate
-        self.today = str(datetime.today().date())
+        self._sortMethod = sortMethod
+        self._startDate = startDate
+        self._sortMetric = sortMetric
+        self._endDate = endDate
+        self._today = str(datetime.today().date())
 
         self.__check_date_validity()
         self.__check_sort_method()
@@ -36,30 +36,50 @@ class SortItems:
 
     values = []
 
+    @property
+    def sortMethod(self):
+        return self._sortMethod
+    
+    @property
+    def sortMetric(self):
+        return self._sortMetric
+    
+    @property
+    def startDate(self):
+        return self._startDate
+    
+    @property
+    def endDate(self):
+        return self._endDate
+    
+    @property
+    def today(self):
+        return self._today
+
     def __check_sort_method(self):
         sortMethods = ["bubble", "merge", "quick", "heap"]
-        if self.sortMethod.lower() not in sortMethods:
+        if self._sortMethod.lower() not in sortMethods:
             raise ValueError("Invalid sort method")
 
     def __check_sort_metric(self):
         sortMetrics = ["high", "close", "open", "volume", "weighted_volume"]
-        if self.sortMetric.lower() not in sortMetrics:
+        if self._sortMetric.lower() not in sortMetrics:
             raise ValueError("Invalid sort metric")
 
     def __check_date_validity(self):
-        if self.endDate == self.today:  # if the end date is set to the current date
-            self.endDate = str(
+        if self._endDate == self._today:  # if the end date is set to the current date
+            self._endDate = str(
                 (datetime.today() - timedelta(days=1)).date()
             )  # set end date to yesterday
 
         elif not (
-            datetime.strptime(self.startDate, "%Y-%m-%d")
+            datetime.strptime(self._startDate, "%Y-%m-%d")
             < datetime.strptime(
-                self.endDate, "%Y-%m-%d"
+                self._endDate, "%Y-%m-%d"
             )  # start date must be before end date
-            and datetime.strptime(self.endDate, "%Y-%m-%d")
+            and datetime.strptime(self._endDate, "%Y-%m-%d")
             <= datetime.strptime(
-                self.today, "%Y-%m-%d"
+                self._today, "%Y-%m-%d"
             )  # and end date must be before or equal to today
         ):
             raise ValueError("The entered dates were not valid")
@@ -67,11 +87,11 @@ class SortItems:
     def __select_dates(self):
         dates = []
         workingDate = (
-            self.startDate
+            self._startDate
         )  # a copy of startDate is automatically made here, so no need for manual copy
         workingDate = datetime.strptime(workingDate, "%Y-%m-%d").date()
         while str(workingDate) != str(
-            (datetime.strptime(self.endDate, "%Y-%m-%d") + timedelta(days=1)).date()
+            (datetime.strptime(self._endDate, "%Y-%m-%d") + timedelta(days=1)).date()
         ):
             dates.append(str(workingDate))
             workingDate = workingDate + timedelta(days=1)
@@ -90,27 +110,27 @@ class SortItems:
 
         for date in dates:
             # this is done like this because I was not able to set variable select parameters
-            if self.sortMetric == "open":
+            if self._sortMetric == "open":
                 self.cursor.execute(
                     "SELECT open, ticker FROM StockPrices WHERE date = ?", (date,)
                 )
 
-            elif self.sortMetric == "close":
+            elif self._sortMetric == "close":
                 self.cursor.execute(
                     "SELECT close, ticker FROM StockPrices WHERE date = ?", (date,)
                 )
 
-            elif self.sortMetric == "high":
+            elif self._sortMetric == "high":
                 self.cursor.execute(
                     "SELECT high, ticker FROM StockPrices WHERE date = ?", (date,)
                 )
 
-            elif self.sortMetric == "volume":
+            elif self._sortMetric == "volume":
                 self.cursor.execute(
                     "SELECT volume, ticker FROM StockPrices WHERE date = ?", (date,)
                 )
 
-            elif self.sortMetric == "weighted_volume":
+            elif self._sortMetric == "weighted_volume":
                 self.cursor.execute(
                     "SELECT weighted_volume, ticker FROM StockPrices WHERE date = ?",
                     (date,),
@@ -125,7 +145,7 @@ class SortItems:
                     {
                         "date": date,
                         "ticker": result[count][1],
-                        self.sortMetric: result[count][0],
+                        self._sortMetric: result[count][0],
                     }
                 )
                 count += 1
@@ -135,7 +155,7 @@ class SortItems:
         self.conn.close()
 
     def bubble_sort(self):
-        # checker = sorted(self.values, key=lambda x: x[self.sortMetric])
+        # checker = sorted(self.values, key=lambda x: x[self._sortMetric])
 
         values = self.values[:]  # copy of self.values
 
@@ -144,7 +164,7 @@ class SortItems:
             swapMade = False
             index = 0
             while index != len(values) - 1:
-                if values[index][self.sortMetric] > values[index + 1][self.sortMetric]:
+                if values[index][self._sortMetric] > values[index + 1][self._sortMetric]:
                     temp = values[index + 1]
                     values[index + 1] = values[index]
                     values[index] = temp
@@ -220,14 +240,16 @@ class SortItems:
 
         values = [[x] for x in self.values]
         while len(values[0]) != len(self.values):
-            values = controller(self.sortMetric, values)
+            values = controller(self._sortMetric, values)
 
         return values[0]
 
     def quick_sort(self):
+        # This will be added given enough time
         pass
 
     def heap_sort(self):
+        # This will be added given enough time
         pass
 
 
@@ -237,4 +259,9 @@ sorter = SortItems(
     startDate="2023-09-11",
     endDate="2023-09-13",
 )
-sorter.bubble_sort()
+# for item in sorter.bubble_sort():
+#     print(item)
+# print(sorter.sortMethod)
+# print(sorter.today)
+# sorter.today = "test"
+# sorter.sortMethod = "test"
