@@ -15,7 +15,7 @@ class SortItems:
         endDate: str = str(datetime.today().date() - timedelta(days=1)),
     ):
         self._startDate = startDate
-        self._sortMetric = sortMetric
+        self._sortMetric = sortMetric.lower()
         self._endDate = endDate
         self._today = str(datetime.today().date())
 
@@ -84,7 +84,7 @@ class SortItems:
 
     def __check_sort_metric(self):
         sortMetrics = ["high", "close", "open", "volume", "weighted_volume"]
-        if self._sortMetric.lower() not in sortMetrics:
+        if self._sortMetric not in sortMetrics:
             raise ValueError("Invalid sort metric")
 
     def __check_date_validity(self):
