@@ -31,6 +31,10 @@ class SortItems:
 
         self.__select_values(self.__select_dates())
 
+        self.conn.commit()
+        self.cursor.close()
+        self.conn.close()
+
     values = []
     
     @property
@@ -171,9 +175,6 @@ class SortItems:
                 )
                 count += 1
 
-        self.conn.commit()
-        self.cursor.close()
-        self.conn.close()
 
     def bubble_sort(self):
         # checker = sorted(self.values, key=lambda x: x[self._sortMetric])
