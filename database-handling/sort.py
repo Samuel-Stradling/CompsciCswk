@@ -3,10 +3,9 @@ from datetime import datetime, timedelta
 
 
 class SortItems:
-    """for dateRange it is a list, where the first item is the start date, and the second is the end date:
-    [startdate, enddate]
-
+    """
     the double underscores infront of some methods means that they are private, and can only be accessed by the __init__ method
+    single underscores mean protected attributes (viewable but not modifiable)
     """
 
     def __init__(
@@ -76,7 +75,6 @@ class SortItems:
             for item in data:
                 file.write(str(item))
                 file.write("\n")
-
 
 
     # def __check_sort_method(self):
