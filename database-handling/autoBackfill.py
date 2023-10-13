@@ -318,7 +318,7 @@ def backfill(lastFullDate: str):
 
     yesterday = datetime.now() - timedelta(days=1)
 
-    if lastFullDate != yesterday:
+    if lastFullDate != str(yesterday.date()):
         datesToFill = []
         startDate = (
             datetime.strptime(lastFullDate, "%Y-%m-%d") + timedelta(days=1)
@@ -330,6 +330,9 @@ def backfill(lastFullDate: str):
             datesToFill.append(str(currentDate))
             currentDate += timedelta(days=1)
         datesToFill.append(str(yesterday))
+    else:
+        print("Already up to date")
+        return
 
     for date in datesToFill:
         try:
