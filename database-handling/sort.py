@@ -11,13 +11,14 @@ class SortItems:
     def __init__(
         self,
         startDate: str,
-        sortMetric: str = "price",
+        sortMetric: str = "close",
         endDate: str = str(datetime.today().date() - timedelta(days=1)),
     ):
         self._startDate = startDate
         self._sortMetric = sortMetric.lower()
         self._endDate = endDate
         self._today = str(datetime.today().date())
+        self._values = []
 
         self.__check_date_validity()
         # self.__check_sort_method()
@@ -35,34 +36,32 @@ class SortItems:
         self.cursor.close()
         self.conn.close()
 
-    values = []
-    
     @property
     def sortMetric(self):
         return self._sortMetric
-    
+
     @property
     def startDate(self):
         return self._startDate
-    
+
     @property
     def endDate(self):
         return self._endDate
-    
+
     @property
     def today(self):
         return self._today
-    
+
     def __write_results_to_file(self, data: list):
         import os
-        FolderName = 'database-handling/sort-search-results'
+
+        FolderName = "database-handling/sort-search-results"
         FileName = f"{self._today}-{self._sortMetric}.txt"
 
         folderPath = os.path.join(os.getcwd(), FolderName)
 
-
         filePath = os.path.join(folderPath, FileName)
-        
+
         if os.path.exists(filePath):
             # Append a unique identifier to the filename
             file_base_name, file_extension = os.path.splitext(FileName)
@@ -71,20 +70,13 @@ class SortItems:
                 new_file_name = f"{file_base_name}{count}{file_extension}"
                 filePath = os.path.join(folderPath, new_file_name)
                 count += 1
-                
 
-        with open(filePath, 'w') as file:
+        with open(filePath, "w") as file:
             file.write(f"from {self._startDate} to {self._endDate}")
             file.write("\n\n")
             for item in data:
                 file.write(str(item))
                 file.write("\n")
-
-
-    # def __check_sort_method(self):
-    #     sortMethods = ["bubble", "merge", "quick", "heap"]
-    #     if self._sortMethod.lower() not in sortMethods:
-    #         raise ValueError("Invalid sort method")
 
     def __check_sort_metric(self):
         sortMetrics = ["high", "close", "open", "volume", "weighted_volume"]
@@ -97,7 +89,16 @@ class SortItems:
                 (datetime.today() - timedelta(days=1)).date()
             )  # set end date to yesterday
 
-        elif not (
+        if int(self._startDate[:4]) < 2020:
+            raise ValueError("Invalid start date")
+
+        try:
+            a = datetime.strptime(self._startDate, "%Y-%m-%d")
+            b = datetime.strptime(self._endDate, "%Y-%m-%d")
+        except:
+            raise ValueError("Incorrect date format")
+
+        if not (
             datetime.strptime(self._startDate, "%Y-%m-%d")
             < datetime.strptime(
                 self._endDate, "%Y-%m-%d"
@@ -166,7 +167,7 @@ class SortItems:
             if result == []:
                 print(f"Data not available for {date}")
             while count < len(result):
-                self.values.append(
+                self._values.append(
                     {
                         "date": date,
                         "ticker": result[count][1],
@@ -175,25 +176,27 @@ class SortItems:
                 )
                 count += 1
 
-
     def bubble_sort(self):
         # checker = sorted(self.values, key=lambda x: x[self._sortMetric])
 
-        values = self.values[:]  # copy of self.values
+        values = self._values[:]  # copy of self.values
 
         swapMade = True
         while swapMade:
             swapMade = False
             index = 0
             while index != len(values) - 1:
-                if values[index][self._sortMetric] > values[index + 1][self._sortMetric]:
+                if (
+                    values[index][self._sortMetric]
+                    > values[index + 1][self._sortMetric]
+                ):
                     temp = values[index + 1]
                     values[index + 1] = values[index]
                     values[index] = temp
                     swapMade = True
 
                 index += 1
-        
+
         self.__write_results_to_file(values)
         return values
 
@@ -261,10 +264,10 @@ class SortItems:
                         newList.append(toBeSorted[index + 2])
                 return newList
 
-        values = [[x] for x in self.values]
-        while len(values[0]) != len(self.values):
+        values = [[x] for x in self._values]
+        while len(values[0]) != len(self._values):
             values = controller(self._sortMetric, values)
-        
+
         self.__write_results_to_file(values[0])
         return values[0]
 
@@ -275,19 +278,3 @@ class SortItems:
     def heap_sort(self):
         # This will be added given enough time
         pass
-
-
-sorter = SortItems(
-    sortMetric="high",
-    startDate="2023-09-11",
-    endDate="2023-09-13",
-)
-sorter.bubble_sort()
-sorter.merge_sort()
-
-# for item in sorter.bubble_sort():
-#     print(item)
-# print(sorter.sortMethod)
-# print(sorter.today)
-# sorter.today = "test"
-# sorter.sortMethod = "test"
