@@ -1,28 +1,7 @@
+import sqlite3
+
+
 def check_dates(startDate: str, endDate: str):
-    """
-    Check the validity of input dates and raise errors where applicable.
-
-    Parameters:
-    - startDate (str): The start date in the format "YYYY-MM-DD".
-    - endDate (str): The end date in the format "YYYY-MM-DD".
-
-    Returns:
-        Does not return anything.
-
-    Raises:
-    - ValueError: If any of the following conditions are met:
-      - The start date is before the year 2020.
-      - Either the start date or end date is not in the format "YYYY-MM-DD".
-      - The start date is after the end date.
-      - The end date is after the current date.
-
-    Dependencies:
-    - This function depends on the 'datetime' and 'timedelta' classes from the 'datetime' module.
-
-    Note:
-    - This function should be run before any other functions using the dates, to ensure that they are able
-    to work as intended (i.e. with valid dates)
-    """
     from datetime import datetime, timedelta
 
     today = str(datetime.today().date())
@@ -46,42 +25,14 @@ def check_dates(startDate: str, endDate: str):
     ):
         raise ValueError("The entered dates were not valid")
 
+    return (startDate, endDate)
 
-def get_data(startDate: str, endDate: str, *companies: str) -> tuple:
-    """
-    Retrieve stock price data for a variable number of companies (1 or more) within a date range.
 
-    Parameters:
-    - startDate (str): The start date in the format "YYYY-MM-DD".
-    - endDate (str): The end date in the format "YYYY-MM-DD".
-    - *companies (str): Variable-length argument list of company ticker symbols.
-
-    Returns:
-    - tuple: A tuple containing the following elements respectively:
-      - data (pd.DataFrame): A DataFrame containing stock price data for the specified companies within the date range.
-      - startDate (str): The provided start date.
-      - endDate (str): The provided end date.
-
-    Raises:
-    - sqlite3.Error: If there is an error while connecting to the SQLite database or executing the SQL query.
-
-    Dependencies:
-    - This function depends on the 'pandas' library and 'sqlite3' module for database operations.
-
-    Example:
-    ```python
-    data, start_date, end_date = get_data("2023-01-01", "2023-01-05", "AAPL", "GOOGL", "MSFT")
-    print(data)
-    print(start_date)
-    print(end_date)
-    # Output: DataFrame with stock price data, '2023-01-01', '2023-01-05'
-    ```
-
-    Note:
-    - This function retrieves stock price data for specified companies within the given date range by querying an SQLite database. It returns a tuple containing the data, start date, and end date. An example of how to use the function is provided.
-    """
+def get_data(dates: tuple, *companies: str) -> tuple:
     import pandas as pd
-    import sqlite3
+
+    startDate = dates[0]
+    endDate = dates[1]
 
     try:
         conn = sqlite3.connect("data/main.sql")
@@ -109,7 +60,6 @@ def generate_candlestick(startDate, endDate, *companies):
     """not possible unfortunately due to previous ommital of 'low' from data. Foolish"""
     pass
     # import pandas as pd
-    # import sqlite3
     # import plotly.graph_objects as go
     # import plotly.express as px
 
@@ -137,65 +87,94 @@ def generate_candlestick(startDate, endDate, *companies):
     # fig.show()
 
 
-def generate_graph(data: tuple, graphType: str):
-    """
-    Generate and display a plotly graph based on stock price data.
+def get_company_name_from_ticker(ticker: str) -> str:
+    """Helper function to get the company name of tickers, so that they can be displayed on the title of the graph"""
+    try:
+        conn = sqlite3.connect("data/main.sql")
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM Companies where ticker = ?", (ticker,))
+        result = cursor.fetchall()
+        return result[0][0]
 
-    Parameters:
-    - data (tuple): A tuple containing stock price data, start date, and end date.
-    - graphType (str): The type of graph to generate ("bar" or "line").
+    except sqlite3.Error as error:
+        print("Error: {}".format(error))
 
-    Returns:
-    - None
+    finally:
+        # Close the cursor and connection
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
-    Raises:
-    - ValueError: If an unsupported 'graphType' is provided.
 
-    Dependencies:
-    - This function depends on the 'plotly.express' library for graph generation.
-
-    Example:
-    ```python
-    generate_graph((data, "2023-01-01", "2023-01-05"), "line")
-    ```
-
-    Note:
-    - This function generates and displays a plotly graph based on stock price data. 
-    The 'data' parameter should be a tuple containing stock price data in the form of a DataFrame, along with the start and end date. 
-    The 'graphType' specifies whether to generate a bar or line graph. An example of how to use the function is provided.
-    - The graph is opened with localhost on the default browser. Here, an image of the graph at a specific point can be saved.
-    """
+def generate_graph(data: tuple, graphType: str, displayOnSameGraph: bool = True):
     import plotly.express as px
 
     startDate = data[1]
     endDate = data[2]
     data = data[0]
     companies = data["ticker"].unique()
+    companiesFullNames = [
+        get_company_name_from_ticker(x).replace(".", "") for x in companies
+    ]
 
-    if graphType == "bar":
-        fig = px.bar(
-            data,
-            x="date",
-            y="close",
-            color="ticker",
-            title=f"{', '.join(companies)}'s price from {startDate} to {endDate}",
-        )
-    elif graphType == "line":
-        fig = px.line(
-            data,
-            x="date",
-            y="close",
-            color="ticker",
-            title=f"{', '.join(companies)}'s price from {startDate} to {endDate}",
-        )
-    else:
-        raise ValueError(
-            "Unsupported graphType. Supported graph types are 'bar', 'line'"
-        )
+    if displayOnSameGraph:
+        if graphType == "bar":
+            fig = px.bar(
+                data,  # use entire data frame for one plot
+                x="date",
+                y="close",
+                color="ticker",
+                title=f"{', '.join(companiesFullNames)}'s prices from {startDate} to {endDate}",
+            )
+            fig.update_xaxes(title_text="Date")
+            fig.update_yaxes(title_text="Price in USD")
+            fig.show()
+        elif graphType == "line":
+            fig = px.line(
+                data,
+                x="date",
+                y="close",
+                color="ticker",
+                title=f"{', '.join(companiesFullNames)}'s prices from {startDate} to {endDate}",
+            )
+            fig.update_xaxes(title_text="Date")
+            fig.update_yaxes(title_text="Price in USD")
+            fig.show()
+        else:
+            raise ValueError(
+                "Unsupported graphType. Supported graph types are 'bar', 'line'"
+            )
+    else:  # if not display on same graph
+        for company in companies:
+            filteredData = data[
+                data["ticker"] == company
+            ]  # filter dataframe to only get for specific company
+            if graphType == "bar":
+                fig = px.bar(
+                    filteredData,
+                    x="date",
+                    y="close",
+                    color="ticker",
+                    title=f"{get_company_name_from_ticker(company).replace('.', '')}'s prices from {startDate} to {endDate}",
+                )
+            elif graphType == "line":
+                fig = px.line(
+                    filteredData,
+                    x="date",
+                    y="close",
+                    color="ticker",
+                    title=f"{get_company_name_from_ticker(company).replace('.', '')}'s prices from {startDate} to {endDate}",
+                )
+            fig.update_xaxes(title_text="Date")
+            fig.update_yaxes(title_text="Price in USD")
+            fig.show()
 
-    fig.update_xaxes(title_text="Date")
-    fig.update_yaxes(title_text="Price in USD")
-    fig.show()
 
-
-generate_graph(get_data("2022-09-19", "2023-10-20", "AAPL"), "line")
+generate_graph(
+    get_data(
+        check_dates("2022-09-19", "2023-10-21"), "AAPL", "PYPL", "XEL", "TXN", "CRWD"
+    ),
+    "line",
+    displayOnSameGraph=False,
+)
