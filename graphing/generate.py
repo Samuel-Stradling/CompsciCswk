@@ -25,7 +25,7 @@ def check_dates(startDate: str, endDate: str):
     ):
         raise ValueError("The entered dates were not valid")
 
-    return (startDate, endDate)
+    return (startDate, endDate) # necessary as it is used as an argument of latter functions (i.e. needs to check, then return)
 
 
 def get_data(dates: tuple, *companies: str) -> tuple:
@@ -53,7 +53,8 @@ def get_data(dates: tuple, *companies: str) -> tuple:
     finally:
         conn.close()
 
-    return (data, startDate, endDate)
+    return (data, startDate, endDate) # necessary as generate graph needs the data, but also needs the given start and end date
+# Other methods such as implementing dates into the dataframe were too tricky. Other possible solution is to make this file into a class.
 
 
 def generate_candlestick(startDate, endDate, *companies):
