@@ -136,6 +136,9 @@ class SortItems:
 
         for date in dates:
             # this is done like this because I was not able to set variable select parameters
+
+            # perhaps possible if I use an f string query first??
+
             if self._sortMetric == "open":
                 self.cursor.execute(
                     "SELECT open, ticker FROM StockPrices WHERE date = ?", (date,)
