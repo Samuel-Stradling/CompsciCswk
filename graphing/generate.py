@@ -1,7 +1,7 @@
 import sqlite3
 
-class Generate:
 
+class Generate:
     def __init__(self, startDate: str, endDate: str, *companies):
         self._startDate = startDate
         self._endDate = endDate
@@ -30,7 +30,9 @@ class Generate:
 
         if not (
             datetime.strptime(self._startDate, "%Y-%m-%d")
-            < datetime.strptime(self._endDate, "%Y-%m-%d")  # start date must be before end date
+            < datetime.strptime(
+                self._endDate, "%Y-%m-%d"
+            )  # start date must be before end date
             and datetime.strptime(self._endDate, "%Y-%m-%d")
             <= datetime.strptime(today, "%Y-%m-%d")
         ):
@@ -86,7 +88,6 @@ class Generate:
         ]
 
         if displayOnSameGraph:
-
             fig = px.line(
                 self._data,
                 x="date",
@@ -124,7 +125,6 @@ class Generate:
         ]
 
         if displayOnSameGraph:
-
             fig = px.bar(
                 self._data,
                 x="date",
@@ -152,9 +152,11 @@ class Generate:
                 fig.update_xaxes(title_text="Date")
                 fig.update_yaxes(title_text="Price in USD")
                 fig.show()
+
     def generate_candlestick_graph(self, displayOnSameGraph=True):
         """not possible unfortunately due to previous ommital of 'low' from data. Foolish"""
         pass
+
     # import pandas as pd
     # import plotly.graph_objects as go
     # import plotly.express as px
@@ -181,7 +183,7 @@ class Generate:
     # fig = go.Figure(data=[go.Candlestick(x=data['date'], open=data['open'], high=data['high'], low=['low'], close=data['close'])])
     # fig.update_layout(title=f"{', '.join(companies)}'s price from {startDate} to {endDate}", xaxis_title='Date', yaxis_title='Price in USD')
     # fig.show()
-        
-        
+
+
 gen1 = Generate("2022-09-09", "2023-09-28", "AAPL", "CSCO", "GOOG")
 gen1.generate_bar_graph(False)
