@@ -154,7 +154,7 @@ class Generate:
                 fig.show()
 
     def generate_candlestick_graph(self, displayOnSameGraph=True):
-        """not possible unfortunately due to previous ommital of 'low' from data. Foolish"""
+        """not possible unfortunately due to previous ommital of 'low' from data."""
         pass
 
     # import pandas as pd
