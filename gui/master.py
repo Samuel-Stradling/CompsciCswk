@@ -1,108 +1,135 @@
-import pygame
-import sys
+import tkinter as tk
+from tkinter import ttk
 
-# Initialize Pygame
-pygame.init()
 
-# Screen dimensions
-WIDTH, HEIGHT = 800, 600
+LARGEFONT =("Arial", 35)
 
-# Define colors
-WHITE = (255, 255, 255)
-GRAY = (200, 200, 200)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
+class tkinterApp(tk.Tk):
+	
+	# __init__ function for class tkinterApp 
+	def __init__(self, *args, **kwargs): 
+		
+		# __init__ function for class Tk
+		tk.Tk.__init__(self, *args, **kwargs)
+		
+		# creating a container
+		container = tk.Frame(self) 
+		container.pack(side = "top", fill = "both", expand = True) 
 
-# Create a Pygame screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Finance Analysis App")
+		container.grid_rowconfigure(0, weight = 1)
+		container.grid_columnconfigure(0, weight = 1)
 
-# Define a base class for all screens
-class Screen:
-    def __init__(self, background_color):
-        self.background_color = background_color
-        self.buttons = []
+		# initializing frames to an empty array
+		self.frames = {} 
 
-    def add_button(self, button):
-        self.buttons.append(button)
+		# iterating through a tuple consisting
+		# of the different page layouts
+		for F in (StartPage, Page1, Page2):
 
-    def render(self):
-        screen.fill(self.background_color)
-        for button in self.buttons:
-            button.draw()
+			frame = F(container, self)
 
-# Create a class for the home screen
-class HomeScreen(Screen):
-    def __init__(self):
-        super().__init__(WHITE)
+			# initializing frame of that object from
+			# startpage, page1, page2 respectively with 
+			# for loop
+			self.frames[F] = frame 
 
-        # Create buttons for other screens
-        self.sort_data_button = Button(100, 100, "Sort Data", BLUE)
-        self.search_data_button = Button(100, 200, "Search Data", GREEN)
-        self.settings_button = Button(100, 300, "Settings", GRAY)
-        self.graph_button = Button(100, 400, "Graph", RED)
+			frame.grid(row = 0, column = 0, sticky ="nsew")
 
-        self.add_button(self.sort_data_button)
-        self.add_button(self.search_data_button)
-        self.add_button(self.settings_button)
-        self.add_button(self.graph_button)
+		self.show_frame(StartPage)
 
-# Create a class for other screens (Sort Data, Search Data, Settings, Graph)
-class OtherScreen(Screen):
-    def __init__(self, title, background_color):
-        super().__init__(background_color)
+	# to display the current frame passed as
+	# parameter
+	def show_frame(self, cont):
+		frame = self.frames[cont]
+		frame.tkraise()
 
-        # Create a return button to go back to the home screen
-        self.return_button = Button(20, 20, "Return to Home", GRAY)
+# first window frame startpage
 
-        self.add_button(self.return_button)
+class StartPage(tk.Frame):
+	def __init__(self, parent, controller): 
+		tk.Frame.__init__(self, parent)
+		
+		# label of frame Layout 2
+		label = ttk.Label(self, text ="Startpage", font = LARGEFONT)
+		
+		# putting the grid in its place by using
+		# grid
+		label.grid(row = 0, column = 4, padx = 10, pady = 10) 
 
-# Create a class for buttons
-class Button:
-    def __init__(self, x, y, label, color):
-        self.x = x
-        self.y = y
-        self.label = label
-        self.color = color
-        self.font = pygame.font.Font(None, 36)
-        self.text = self.font.render(self.label, True, (255, 255, 255))
-        self.rect = self.text.get_rect(center=(self.x, self.y))
+		button1 = ttk.Button(self, text ="Page 1",
+		command = lambda : controller.show_frame(Page1))
+	
+		# putting the button in its place by
+		# using grid
+		button1.grid(row = 1, column = 1, padx = 10, pady = 10)
 
-    def draw(self):
-        pygame.draw.rect(screen, self.color, self.rect)
-        screen.blit(self.text, self.rect)
+		## button to show frame 2 with text layout2
+		button2 = ttk.Button(self, text ="Page 2",
+		command = lambda : controller.show_frame(Page2))
+	
+		# putting the button in its place by
+		# using grid
+		button2.grid(row = 2, column = 1, padx = 10, pady = 10)
 
-# Initialize screens
-home_screen = HomeScreen()
-sort_data_screen = OtherScreen("Sort Data", BLUE)
-search_data_screen = OtherScreen("Search Data", GREEN)
-settings_screen = OtherScreen("Settings", GRAY)
-graph_screen = OtherScreen("Graph", RED)
+		
 
-# Main loop
-current_screen = home_screen
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if current_screen == home_screen:
-                if home_screen.sort_data_button.rect.collidepoint(event.pos):
-                    current_screen = sort_data_screen
-                elif home_screen.search_data_button.rect.collidepoint(event.pos):
-                    current_screen = search_data_screen
-                elif home_screen.settings_button.rect.collidepoint(event.pos):
-                    current_screen = settings_screen
-                elif home_screen.graph_button.rect.collidepoint(event.pos):
-                    current_screen = graph_screen
-            elif current_screen != home_screen and current_screen.return_button.rect.collidepoint(event.pos):
-                current_screen = home_screen
+# second window frame page1 
+class Page1(tk.Frame):
+	
+	def __init__(self, parent, controller):
+		
+		tk.Frame.__init__(self, parent)
+		label = ttk.Label(self, text ="Page 1", font = LARGEFONT)
+		label.grid(row = 0, column = 4, padx = 10, pady = 10)
 
-    current_screen.render()
-    pygame.display.flip()
+		# button to show frame 2 with text
+		# layout2
+		button1 = ttk.Button(self, text ="StartPage",
+							command = lambda : controller.show_frame(StartPage))
+	
+		# putting the button in its place 
+		# by using grid
+		button1.grid(row = 1, column = 1, padx = 10, pady = 10)
 
-pygame.quit()
-sys.exit()
+		# button to show frame 2 with text
+		# layout2
+		button2 = ttk.Button(self, text ="Page 2",
+							command = lambda : controller.show_frame(Page2))
+	
+		# putting the button in its place by 
+		# using grid
+		button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+
+
+
+
+# third window frame page2
+class Page2(tk.Frame): 
+	def __init__(self, parent, controller):
+		tk.Frame.__init__(self, parent)
+		label = ttk.Label(self, text ="Page 2", font = LARGEFONT)
+		label.grid(row = 0, column = 4, padx = 10, pady = 10)
+
+		# button to show frame 2 with text
+		# layout2
+		button1 = ttk.Button(self, text ="Page 1",
+							command = lambda : controller.show_frame(Page1))
+	
+		# putting the button in its place by 
+		# using grid
+		button1.grid(row = 1, column = 1, padx = 10, pady = 10)
+
+		# button to show frame 3 with text
+		# layout3
+		button2 = ttk.Button(self, text ="Startpage",
+							command = lambda : controller.show_frame(StartPage))
+	
+		# putting the button in its place by
+		# using grid
+		button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+
+
+# Driver Code
+app = tkinterApp()
+app.mainloop()
