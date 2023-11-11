@@ -3,6 +3,8 @@ from tkinter import ttk
 
 
 LARGEFONT = ("Verdana", 35)
+BACKGROUND_COLOR = "#f1f5ff"
+TEXT_COLOR = "black"
 
 
 class tkinterApp(tk.Tk):
@@ -47,18 +49,17 @@ class tkinterApp(tk.Tk):
 
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR) # hex
 
         # label of frame Layout 2
-        label = ttk.Label(self, text="Startpage", font=LARGEFONT)
+        label = ttk.Label(self, text="Finance Analysis System", font=LARGEFONT)
 
         # putting the grid in its place by using
         # grid
-        label.grid(row=0, column=4, padx=10, pady=10)
+        label.place(relx=0.5, rely=0.05, anchor="center")
 
         button1 = ttk.Button(
-            self, text="Page 1", command=lambda: controller.show_frame(Page1)
-        )
+            self, text="Page 1", command=lambda: controller.show_frame(Page1))
 
         # putting the button in its place by
         # using grid
@@ -138,5 +139,5 @@ class Page4(tk.Frame):
 
 # Driver Code
 app = tkinterApp()
-app.state("zoomed")
+app.geometry("900x900")
 app.mainloop()
