@@ -1,143 +1,150 @@
 import tkinter as tk
-from tkinter import ttk
 
-
-LARGEFONT = ("Verdana", 35)
+TITLE_FONT = ("Arial", 35, "bold")
+BUTTON_FONT = ("Arial", 20)
+STANDARD_BLUE = "#0c1469"
 BACKGROUND_COLOR = "#f1f5ff"
-TEXT_COLOR = "black"
+WHITE = "#ffffff"
+HOME_SCREEN_BUTTON_WIDTH = 15
+HOME_SCREEN_BUTTON_HEIGHT = 3
 
 
 class tkinterApp(tk.Tk):
-    # __init__ function for class tkinterApp
     def __init__(self, *args, **kwargs):
-        # __init__ function for class Tk
         tk.Tk.__init__(self, *args, **kwargs)
 
-        # creating a container
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
 
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
-        # initializing frames to an empty array
         self.frames = {}
 
-        # iterating through a tuple consisting
-        # of the different page layouts
-        for F in (StartPage, Page1, Page2, Page3, Page4):
+        for F in (StartPage, SortScreen, GraphsScreen, SearchScreen, ThresholdsScreen):
             frame = F(container, self)
-
-            # initializing frame of that object from
-            # startpage, page1, page2 respectively with
-            # for loop
             self.frames[F] = frame
-
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(StartPage)
 
-    # to display the current frame passed as
-    # parameter
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
 
 
-# first window frame startpage
-
-
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR) # hex
+        tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
 
-        # label of frame Layout 2
-        label = ttk.Label(self, text="Finance Analysis System", font=LARGEFONT)
-
-        # putting the grid in its place by using
-        # grid
+        label = tk.Label(
+            self,
+            text="Finance Analysis System",
+            font=TITLE_FONT,
+            fg=WHITE,
+            bg=STANDARD_BLUE,
+            borderwidth=3,
+            relief="solid",
+            padx=100,
+            pady=8,
+        )
         label.place(relx=0.5, rely=0.05, anchor="center")
 
-        button1 = ttk.Button(
-            self, text="Page 1", command=lambda: controller.show_frame(Page1))
-
-        # putting the button in its place by
-        # using grid
-        button1.grid(row=1, column=1, padx=10, pady=10)
-
-        ## button to show frame 2 with text layout2
-        button2 = ttk.Button(
-            self, text="Page 2", command=lambda: controller.show_frame(Page2)
+        button1 = tk.Button(
+            self,
+            text="Sort Data",
+            command=lambda: controller.show_frame(SortScreen),
+            highlightbackground=BACKGROUND_COLOR,
+            font=BUTTON_FONT,
+            width=HOME_SCREEN_BUTTON_WIDTH,
+            height=HOME_SCREEN_BUTTON_HEIGHT,
         )
+        button1.place(relx=0.25, rely=0.25, anchor="center")
 
-        # putting the button in its place by
-        # using grid
-        button2.grid(row=2, column=1, padx=10, pady=10)
-
-        button3 = ttk.Button(
-            self, text="Page 3", command=lambda: controller.show_frame(Page3)
+        button2 = tk.Button(
+            self,
+            text="Generate Graphs",
+            command=lambda: controller.show_frame(GraphsScreen),
+            highlightbackground=BACKGROUND_COLOR,
+            font=BUTTON_FONT,
+            width=HOME_SCREEN_BUTTON_WIDTH,
+            height=HOME_SCREEN_BUTTON_HEIGHT,
         )
+        button2.place(relx=0.25, rely=0.45, anchor="center")
 
-        # putting the button in its place by
-        # using grid
-        button3.grid(row=3, column=1, padx=10, pady=10)
-
-        button4 = ttk.Button(
-            self, text="Page 4", command=lambda: controller.show_frame(Page4)
+        button3 = tk.Button(
+            self,
+            text="Search Data",
+            command=lambda: controller.show_frame(SearchScreen),
+            highlightbackground=BACKGROUND_COLOR,
+            font=BUTTON_FONT,
+            width=HOME_SCREEN_BUTTON_WIDTH,
+            height=HOME_SCREEN_BUTTON_HEIGHT,
         )
+        button3.place(relx=0.75, rely=0.25, anchor="center")
 
-        # putting the button in its place by
-        # using grid
-        button4.grid(row=4, column=1, padx=10, pady=10)
+        button4 = tk.Button(
+            self,
+            text="Change Settings and Thresholds",
+            command=lambda: controller.show_frame(ThresholdsScreen),
+            highlightbackground=BACKGROUND_COLOR,
+            font=BUTTON_FONT,
+            width=HOME_SCREEN_BUTTON_WIDTH,
+            height=HOME_SCREEN_BUTTON_HEIGHT,
+            wraplength=120,
+        )
+        button4.place(relx=0.75, rely=0.45, anchor="center")
 
 
-class BackButton(ttk.Button):
+class BackButton(tk.Button):
     def __init__(self, parent, controller):
         super().__init__(
-            parent, text="return", command=lambda: controller.show_frame(StartPage)
+            parent,
+            text="⬅",
+            command=lambda: controller.show_frame(StartPage),
+            highlightbackground=BACKGROUND_COLOR,
+            fg="orange",
+            font=BUTTON_FONT,
         )
-        self.grid(row=0, column=10, padx=10, pady=10)
+        self.place(relx=0.95, rely=0.05, anchor="center")
 
 
-# second window frame page1
-class Page1(tk.Frame):
+class SortScreen(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Page 1", font=LARGEFONT)
+        tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
+        label = tk.Label(self, text="Page 1", font=TITLE_FONT)
         label.grid(row=0, column=4, padx=10, pady=10)
 
         backButton = BackButton(self, controller)
 
 
-# third window frame page2
-class Page2(tk.Frame):
+class GraphsScreen(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Page 2", font=LARGEFONT)
+        tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
+        label = tk.Label(self, text="Generate Graphs", font=TITLE_FONT)
         label.grid(row=0, column=4, padx=10, pady=10)
 
         backButton = BackButton(self, controller)
 
 
-class Page3(tk.Frame):
+class SearchScreen(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Page 3", font=LARGEFONT)
+        tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
+        label = tk.Label(self, text="Search Data", font=TITLE_FONT)
         label.grid(row=0, column=4, padx=10, pady=10)
 
         backButton = BackButton(self, controller)
 
 
-class Page4(tk.Frame):
+class ThresholdsScreen(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Page 4", font=LARGEFONT)
+        tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
+        label = tk.Label(self, text="Change Settings and Thresholds", font=TITLE_FONT)
         label.grid(row=0, column=4, padx=10, pady=10)
 
         backButton = BackButton(self, controller)
 
 
-# Driver Code
 app = tkinterApp()
 app.geometry("900x900")
 app.mainloop()
