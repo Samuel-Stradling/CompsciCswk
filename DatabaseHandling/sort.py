@@ -55,7 +55,7 @@ class SortItems:
     def __write_results_to_file(self, data: list):
         import os
 
-        FolderName = "database-handling/sort-search-results"
+        FolderName = "DatabaseHandling/SortSearchResults"
         FileName = f"{self._today}-{self._sortMetric}.txt"
 
         folderPath = os.path.join(os.getcwd(), FolderName)
