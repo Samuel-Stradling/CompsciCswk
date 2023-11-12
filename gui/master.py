@@ -112,8 +112,18 @@ class BackButton(tk.Button):
 class SortScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
-        label = tk.Label(self, text="Page 1", font=TITLE_FONT)
-        label.grid(row=0, column=4, padx=10, pady=10)
+        label = tk.Label(
+            self,
+            text="Sort Data",
+            font=TITLE_FONT,
+            fg=WHITE,
+            bg=STANDARD_BLUE,
+            borderwidth=3,
+            relief="solid",
+            padx=100,
+            pady=8,
+        )
+        label.place(relx=0.5, rely=0.05, anchor="center")
 
         backButton = BackButton(self, controller)
 
@@ -121,8 +131,18 @@ class SortScreen(tk.Frame):
 class GraphsScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
-        label = tk.Label(self, text="Generate Graphs", font=TITLE_FONT)
-        label.grid(row=0, column=4, padx=10, pady=10)
+        label = tk.Label(
+            self,
+            text="Produce Graphs",
+            font=TITLE_FONT,
+            fg=WHITE,
+            bg=STANDARD_BLUE,
+            borderwidth=3,
+            relief="solid",
+            padx=100,
+            pady=8,
+        )
+        label.place(relx=0.5, rely=0.05, anchor="center")
 
         backButton = BackButton(self, controller)
 
@@ -130,8 +150,18 @@ class GraphsScreen(tk.Frame):
 class SearchScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
-        label = tk.Label(self, text="Search Data", font=TITLE_FONT)
-        label.grid(row=0, column=4, padx=10, pady=10)
+        label = tk.Label(
+            self,
+            text="Search Data",
+            font=TITLE_FONT,
+            fg=WHITE,
+            bg=STANDARD_BLUE,
+            borderwidth=3,
+            relief="solid",
+            padx=100,
+            pady=8,
+        )
+        label.place(relx=0.5, rely=0.05, anchor="center")
 
         backButton = BackButton(self, controller)
 
@@ -139,12 +169,20 @@ class SearchScreen(tk.Frame):
 class ThresholdsScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
-        label = tk.Label(self, text="Change Settings and Thresholds", font=TITLE_FONT)
-        label.grid(row=0, column=4, padx=10, pady=10)
+        label = tk.Label(
+            self,
+            text="Preferences and Thresholds",
+            font=TITLE_FONT,
+            fg=WHITE,
+            bg=STANDARD_BLUE,
+            borderwidth=3,
+            relief="solid",
+            padx=100,
+            pady=8,
+        )
+        label.place(relx=0.5, rely=0.05, anchor="center")
 
         backButton = BackButton(self, controller)
 
 
-app = tkinterApp()
-app.geometry("900x900")
-app.mainloop()
+
