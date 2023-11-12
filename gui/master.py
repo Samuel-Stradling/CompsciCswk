@@ -1,7 +1,11 @@
 import tkinter as tk
+import tkinter.messagebox as mb
 
 TITLE_FONT = ("Arial", 35, "bold")
 BUTTON_FONT = ("Arial", 20)
+TEXT_BOX_FONT = ("Helvetica", 15)
+ITALIC_SAVE_DIR_FONT = ("Helvetica", 15, "italic")
+COMMAND_BUTTON_FONT = ("Arial", 27, "bold")
 STANDARD_BLUE = "#0c1469"
 BACKGROUND_COLOR = "#f1f5ff"
 WHITE = "#ffffff"
@@ -110,6 +114,83 @@ class BackButton(tk.Button):
 
 
 class SortScreen(tk.Frame):
+
+    def show_top_10_results(self, top_10_data: list, sort_by):
+        # Create or update a label to display the top 10 results
+        top_10_data_reformatted = []
+        for dictionary in top_10_data:
+            temp = f"{dictionary['ticker']} on {dictionary['date']} at {dictionary[sort_by]} ({sort_by})"
+            top_10_data_reformatted.append(temp)
+
+        
+
+        result_label = tk.Label(
+            self,
+            text="Top 10 Results:\n\n\n" + "\n\n".join(top_10_data_reformatted),
+            font=TEXT_BOX_FONT,
+            fg=WHITE,
+            bg=STANDARD_BLUE,
+            padx=10,
+            pady=10,
+            borderwidth=3,
+            relief="solid",
+            
+        )
+        result_label.place(relx=0.8, rely=0.4, anchor="center")
+
+        from datetime import datetime
+        date = datetime.today().date()
+
+        save_dir_label = tk.Label(
+            self,
+            text=f"Saved to /DatabaseHandling/SortSearchResults/{date}-{sort_by}X.txt",
+            font=ITALIC_SAVE_DIR_FONT,
+            fg=WHITE,
+            bg=STANDARD_BLUE,
+            width=32,
+            height=4,
+            borderwidth=2,
+            relief="solid",
+            wraplength=310
+        )
+
+        save_dir_label.place(relx=0.8, rely=0.7, anchor="center")
+
+    def get_user_data_and_sort(
+        self, start_date_entry, end_date_entry, selected_sort, sort_method
+    ):
+        from DatabaseHandling.sort import SortItems
+        # Retrieve the entered data
+        start_date = start_date_entry.get()
+        end_date = end_date_entry.get()
+        sort_by = selected_sort.get()
+        sort_algorithm = sort_method.get()
+
+        # Check the validity of the data
+        if not (start_date and end_date):
+            warning = "Please enter both start and end dates."
+        elif not sort_algorithm:
+            warning = "Please select a sort method."
+        else:
+            try:
+                sorter = SortItems(start_date, sort_by, end_date)
+                if sort_algorithm == "bubble":
+                    result = sorter.bubble_sort()
+                elif sort_algorithm == "merge":
+                    result = sorter.merge_sort()
+
+                self.show_top_10_results(result[-10:], sort_by)
+
+            except Exception as e:
+                mb.showwarning("Invalid Data", e)
+            return
+
+
+        # Show a warning message
+        mb.showwarning("Data Warning", warning)
+
+    
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
         label = tk.Label(
@@ -126,6 +207,84 @@ class SortScreen(tk.Frame):
         label.place(relx=0.5, rely=0.05, anchor="center")
 
         backButton = BackButton(self, controller)
+
+        # Start Date Entry
+        start_label = tk.Label(
+            self, text="Start Date (yyyy-mm-dd):", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        start_label.place(relx=0.15, rely=0.13, anchor="center")
+        start_date_entry = tk.Entry(self, font=TEXT_BOX_FONT, width=12)
+        start_date_entry.place(relx=0.36, rely=0.115)
+
+        # End Date Entry
+        end_label = tk.Label(
+            self, text="End Date (yyyy-mm-dd):", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        end_label.place(relx=0.15, rely=0.23, anchor="center")
+        end_date_entry = tk.Entry(self, font=TEXT_BOX_FONT, width=12)
+        end_date_entry.place(relx=0.36, rely=0.215)
+
+        # Dropdown Box for Sort Metrics
+        sort_label = tk.Label(
+            self, text="Sort By:", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        sort_label.place(relx=0.23, rely=0.33, anchor="center")
+
+        # Options for the dropdown
+        sort_options = ["high", "close", "open", "volume", "weighted_volume"]
+        selected_sort = tk.StringVar(self)
+        selected_sort.set(sort_options[0])  # Default value
+
+        # Creating the dropdown
+        sort_dropdown = tk.OptionMenu(self, selected_sort, *sort_options)
+        sort_dropdown.config(
+            font=TEXT_BOX_FONT, width=12, highlightbackground=BACKGROUND_COLOR
+        )
+        sort_dropdown.place(relx=0.43, rely=0.33, anchor="center")
+
+        # Sort Method Checkbox
+        sort_method_label = tk.Label(
+            self, text="Sort Method:", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        sort_method_label.place(relx=0.21, rely=0.43, anchor="center")
+
+        # Variable to store selected sort method
+        sort_method = tk.StringVar()
+
+        # Radio buttons for sorting methods
+        bubble_radio = tk.Radiobutton(
+            self,
+            text="Bubble",
+            variable=sort_method,
+            value="bubble",
+            font=TEXT_BOX_FONT,
+            bg=BACKGROUND_COLOR,
+        )
+        bubble_radio.place(relx=0.4, rely=0.43, anchor="center")
+
+        merge_radio = tk.Radiobutton(
+            self,
+            text="Merge",
+            variable=sort_method,
+            value="merge",
+            font=TEXT_BOX_FONT,
+            bg=BACKGROUND_COLOR,
+        )
+        merge_radio.place(relx=0.4, rely=0.46, anchor="center")
+
+        # Button to get user data
+        get_data_button = tk.Button(
+            self,
+            text="SORT",
+            command=lambda: self.get_user_data_and_sort(
+                start_date_entry, end_date_entry, selected_sort, sort_method
+            ),
+            highlightbackground=BACKGROUND_COLOR,
+            font=COMMAND_BUTTON_FONT,
+            width=10,
+            height=2,
+        )
+        get_data_button.place(relx=0.42, rely=0.6, anchor="center")
 
 
 class GraphsScreen(tk.Frame):
@@ -183,6 +342,3 @@ class ThresholdsScreen(tk.Frame):
         label.place(relx=0.5, rely=0.05, anchor="center")
 
         backButton = BackButton(self, controller)
-
-
-
