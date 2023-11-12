@@ -1,3 +1,7 @@
-# from api.dataHandling import call_ticker_current
 
-# print(call_ticker_current("AAPL"))
+from gui.master import tkinterApp
+
+app = tkinterApp()
+app.geometry("900x900")
+app.mainloop()
+
