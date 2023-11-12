@@ -34,7 +34,7 @@ def call_all_companies(date: str) -> list:
     import os
     import requests
     from dotenv import load_dotenv
-    from companies import company_dictionary
+    from DatabaseHandling.companies import company_dictionary
 
     load_dotenv()
     api_key = os.environ.get("api-token")
@@ -361,4 +361,4 @@ def backfill(lastFullDate: str):
             print(date, "\n")  # prints date to indicate that it is accounted for
 
 
-backfill(find_last_full_date())
+# backfill(find_last_full_date())
