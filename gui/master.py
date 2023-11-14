@@ -114,15 +114,13 @@ class BackButton(tk.Button):
 
 
 class SortScreen(tk.Frame):
-
     def show_top_10_results(self, top_10_data: list, sort_by):
         # Create or update a label to display the top 10 results
         top_10_data_reformatted = []
+        top_10_data.reverse()
         for dictionary in top_10_data:
             temp = f"{dictionary['ticker']} on {dictionary['date']} at {dictionary[sort_by]} ({sort_by})"
             top_10_data_reformatted.append(temp)
-
-        
 
         result_label = tk.Label(
             self,
@@ -134,11 +132,11 @@ class SortScreen(tk.Frame):
             pady=10,
             borderwidth=3,
             relief="solid",
-            
         )
         result_label.place(relx=0.8, rely=0.4, anchor="center")
 
         from datetime import datetime
+
         date = datetime.today().date()
 
         save_dir_label = tk.Label(
@@ -151,7 +149,7 @@ class SortScreen(tk.Frame):
             height=4,
             borderwidth=2,
             relief="solid",
-            wraplength=310
+            wraplength=310,
         )
 
         save_dir_label.place(relx=0.8, rely=0.7, anchor="center")
@@ -160,6 +158,7 @@ class SortScreen(tk.Frame):
         self, start_date_entry, end_date_entry, selected_sort, sort_method
     ):
         from DatabaseHandling.sort import SortItems
+
         # Retrieve the entered data
         start_date = start_date_entry.get()
         end_date = end_date_entry.get()
@@ -179,17 +178,14 @@ class SortScreen(tk.Frame):
                 elif sort_algorithm == "merge":
                     result = sorter.merge_sort()
 
-                self.show_top_10_results(result[-10:], sort_by)
+                self.show_top_10_results(result[-10:], sorter.sortMetric)
 
             except Exception as e:
                 mb.showwarning("Invalid Data", e)
             return
 
-
         # Show a warning message
         mb.showwarning("Data Warning", warning)
-
-    
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
