@@ -179,6 +179,10 @@ class SortItems:
                 )
                 count += 1
 
+    @property
+    def sortMetric(self):
+        return self._sortMetric
+
     def bubble_sort(self):
         # checker = sorted(self.values, key=lambda x: x[self._sortMetric])
 
