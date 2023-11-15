@@ -284,8 +284,18 @@ class SortScreen(tk.Frame):
 
 
 class GraphsScreen(tk.Frame):
-    def get_user_data_and_generate(self, selected_company1, selected_company2, selected_company3, end_date_entry, start_date_entry, graph_type, using_single_axes):
+    def get_user_data_and_generate(
+        self,
+        selected_company1,
+        selected_company2,
+        selected_company3,
+        end_date_entry,
+        start_date_entry,
+        graph_type,
+        using_single_axes,
+    ):
         from graphing.generate import Generate
+
         # Retrieve the selected companies from the dropdown boxes
         company1 = selected_company1.get()
         company2 = selected_company2.get()
@@ -298,13 +308,16 @@ class GraphsScreen(tk.Frame):
         if not (start_date and end_date):
             warning = "Please enter both start and end dates."
             mb.showwarning("Date Warning", warning)
+        elif graph_type == "":
+            warning = "Please select a graph type"
+            mb.showwarning("Graph Type Warning", warning)
         else:
             try:
                 companies = [company1, company2, company3]
                 while "None" in companies:
                     companies.remove("None")
                 if len(companies) < 1:
-                    message="1 or more companies must be selected"
+                    message = "1 or more companies must be selected"
                     mb.showwarning("Invalid data", message=message)
                     return
                 elif len(companies) == 1:
@@ -315,21 +328,15 @@ class GraphsScreen(tk.Frame):
                 elif graph_type == "bar":
                     generator.generate_bar_graph(using_single_axes)
 
-                
-
             except Exception as e:
                 mb.showwarning("Invalid Data", e)
             return
-        
-        
+
         # generator1 = Generate()
-        
-
-
-        
 
     def get_all_company_names(self):
         import sqlite3
+
         try:
             conn = sqlite3.connect("data/main.sql")
             cursor = conn.cursor()
@@ -378,7 +385,6 @@ class GraphsScreen(tk.Frame):
         end_date_entry = tk.Entry(self, font=TEXT_BOX_FONT, width=12)
         end_date_entry.place(relx=0.44, rely=0.58)
 
-
         # Dropdown Box for Company 1
         company1_label = tk.Label(
             self, text="Company 1:", font=BUTTON_FONT, bg=BACKGROUND_COLOR
@@ -387,7 +393,6 @@ class GraphsScreen(tk.Frame):
 
         # Options for the dropdown
         company_options = ["None"] + self.get_all_company_names()
-
 
         selected_company1 = tk.StringVar(self)
         selected_company1.set(company_options[0])  # Default value
@@ -431,11 +436,12 @@ class GraphsScreen(tk.Frame):
         )
         company3_dropdown.place(relx=0.51, rely=0.4, anchor="center")
 
-
         graph_type = tk.StringVar()
 
-        graph_type_label = tk.Label(self, text="Select a graph type:", font=BUTTON_FONT, bg=BACKGROUND_COLOR)
-        graph_type_label.place(relx = 0.255, rely=0.7, anchor="center")
+        graph_type_label = tk.Label(
+            self, text="Select a graph type:", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        graph_type_label.place(relx=0.255, rely=0.7, anchor="center")
 
         # Radio buttons for sorting methods
         line_radio = tk.Radiobutton(
@@ -457,7 +463,7 @@ class GraphsScreen(tk.Frame):
             bg=BACKGROUND_COLOR,
         )
         bar_radio.place(relx=0.51, rely=0.73, anchor="center")
-        
+
         use_single_axes = tk.BooleanVar()
         use_single_axes_checkbox = tk.Checkbutton(
             self,
@@ -468,22 +474,24 @@ class GraphsScreen(tk.Frame):
         )
         use_single_axes_checkbox.place(relx=0.5, rely=0.8, anchor="center")
 
-
         get_input_button = tk.Button(
-                    self,
-                    text="Generate",
-                    command=lambda: self.get_user_data_and_generate(
-                        selected_company1, selected_company2, selected_company3, end_date_entry, start_date_entry, graph_type, use_single_axes
-                    ),
-                    highlightbackground=BACKGROUND_COLOR,
-                    font=COMMAND_BUTTON_FONT,
-                    width=15,
-                    height=2,
-                )
+            self,
+            text="Generate",
+            command=lambda: self.get_user_data_and_generate(
+                selected_company1,
+                selected_company2,
+                selected_company3,
+                end_date_entry,
+                start_date_entry,
+                graph_type,
+                use_single_axes,
+            ),
+            highlightbackground=BACKGROUND_COLOR,
+            font=COMMAND_BUTTON_FONT,
+            width=15,
+            height=2,
+        )
         get_input_button.place(relx=0.5, rely=0.95, anchor="center")
-
-
-
 
         backButton = BackButton(self, controller)
 
