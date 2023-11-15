@@ -284,6 +284,69 @@ class SortScreen(tk.Frame):
 
 
 class GraphsScreen(tk.Frame):
+    def get_user_data_and_generate(self, selected_company1, selected_company2, selected_company3, end_date_entry, start_date_entry, graph_type, using_single_axes):
+        from graphing.generate import Generate
+        # Retrieve the selected companies from the dropdown boxes
+        company1 = selected_company1.get()
+        company2 = selected_company2.get()
+        company3 = selected_company3.get()
+        end_date = end_date_entry.get()
+        start_date = start_date_entry.get()
+        graph_type = graph_type.get()
+        using_single_axes = using_single_axes.get()
+
+        if not (start_date and end_date):
+            warning = "Please enter both start and end dates."
+            mb.showwarning("Date Warning", warning)
+        else:
+            try:
+                companies = [company1, company2, company3]
+                while "None" in companies:
+                    companies.remove("None")
+                if len(companies) < 1:
+                    message="1 or more companies must be selected"
+                    mb.showwarning("Invalid data", message=message)
+                    return
+                elif len(companies) == 1:
+                    companies = companies[0]
+                generator = Generate(start_date, end_date, *companies)
+                if graph_type == "line":
+                    generator.generate_line_graph(using_single_axes)
+                elif graph_type == "bar":
+                    generator.generate_bar_graph(using_single_axes)
+
+                
+
+            except Exception as e:
+                mb.showwarning("Invalid Data", e)
+            return
+        
+        
+        # generator1 = Generate()
+        
+
+
+        
+
+    def get_all_company_names(self):
+        import sqlite3
+        try:
+            conn = sqlite3.connect("data/main.sql")
+            cursor = conn.cursor()
+            cursor.execute("SELECT ticker FROM Companies")
+            result = cursor.fetchall()
+            return [x[0] for x in result]
+
+        except sqlite3.Error as error:
+            print("Error: {}".format(error))
+
+        finally:
+            # Close the cursor and connection
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
         label = tk.Label(
@@ -298,6 +361,129 @@ class GraphsScreen(tk.Frame):
             pady=8,
         )
         label.place(relx=0.5, rely=0.05, anchor="center")
+
+        # Start Date Entry
+        start_label = tk.Label(
+            self, text="Start Date (yyyy-mm-dd):", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        start_label.place(relx=0.235, rely=0.50, anchor="center")
+        start_date_entry = tk.Entry(self, font=TEXT_BOX_FONT, width=12)
+        start_date_entry.place(relx=0.44, rely=0.49)
+
+        # End Date Entry
+        end_label = tk.Label(
+            self, text="End Date (yyyy-mm-dd):", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        end_label.place(relx=0.235, rely=0.59, anchor="center")
+        end_date_entry = tk.Entry(self, font=TEXT_BOX_FONT, width=12)
+        end_date_entry.place(relx=0.44, rely=0.58)
+
+
+        # Dropdown Box for Company 1
+        company1_label = tk.Label(
+            self, text="Company 1:", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        company1_label.place(relx=0.3, rely=0.2, anchor="center")
+
+        # Options for the dropdown
+        company_options = ["None"] + self.get_all_company_names()
+
+
+        selected_company1 = tk.StringVar(self)
+        selected_company1.set(company_options[0])  # Default value
+
+        # Creating the dropdown
+        company1_dropdown = tk.OptionMenu(self, selected_company1, *company_options)
+        company1_dropdown.config(
+            font=TEXT_BOX_FONT, width=12, highlightbackground=BACKGROUND_COLOR
+        )
+        company1_dropdown.place(relx=0.51, rely=0.2, anchor="center")
+
+        # Dropdown Box for Company 2
+        company2_label = tk.Label(
+            self, text="Company 2:", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        company2_label.place(relx=0.3, rely=0.3, anchor="center")
+
+        selected_company2 = tk.StringVar(self)
+        selected_company2.set(company_options[1])  # Default value
+
+        # Creating the dropdown
+        company2_dropdown = tk.OptionMenu(self, selected_company2, *company_options)
+        company2_dropdown.config(
+            font=TEXT_BOX_FONT, width=12, highlightbackground=BACKGROUND_COLOR
+        )
+        company2_dropdown.place(relx=0.51, rely=0.3, anchor="center")
+
+        # Dropdown Box for Company 3
+        company3_label = tk.Label(
+            self, text="Company 3:", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        company3_label.place(relx=0.3, rely=0.4, anchor="center")
+
+        selected_company3 = tk.StringVar(self)
+        selected_company3.set(company_options[2])  # Default value
+
+        # Creating the dropdown
+        company3_dropdown = tk.OptionMenu(self, selected_company3, *company_options)
+        company3_dropdown.config(
+            font=TEXT_BOX_FONT, width=12, highlightbackground=BACKGROUND_COLOR
+        )
+        company3_dropdown.place(relx=0.51, rely=0.4, anchor="center")
+
+
+        graph_type = tk.StringVar()
+
+        graph_type_label = tk.Label(self, text="Select a graph type:", font=BUTTON_FONT, bg=BACKGROUND_COLOR)
+        graph_type_label.place(relx = 0.255, rely=0.7, anchor="center")
+
+        # Radio buttons for sorting methods
+        line_radio = tk.Radiobutton(
+            self,
+            text="Line",
+            variable=graph_type,
+            value="line",
+            font=TEXT_BOX_FONT,
+            bg=BACKGROUND_COLOR,
+        )
+        line_radio.place(relx=0.51, rely=0.7, anchor="center")
+
+        bar_radio = tk.Radiobutton(
+            self,
+            text="Bar",
+            variable=graph_type,
+            value="bar",
+            font=TEXT_BOX_FONT,
+            bg=BACKGROUND_COLOR,
+        )
+        bar_radio.place(relx=0.51, rely=0.73, anchor="center")
+        
+        use_single_axes = tk.BooleanVar()
+        use_single_axes_checkbox = tk.Checkbutton(
+            self,
+            text="Use Single Axes",
+            variable=use_single_axes,
+            font=TEXT_BOX_FONT,
+            bg=BACKGROUND_COLOR,
+        )
+        use_single_axes_checkbox.place(relx=0.5, rely=0.8, anchor="center")
+
+
+        get_input_button = tk.Button(
+                    self,
+                    text="Generate",
+                    command=lambda: self.get_user_data_and_generate(
+                        selected_company1, selected_company2, selected_company3, end_date_entry, start_date_entry, graph_type, use_single_axes
+                    ),
+                    highlightbackground=BACKGROUND_COLOR,
+                    font=COMMAND_BUTTON_FONT,
+                    width=15,
+                    height=2,
+                )
+        get_input_button.place(relx=0.5, rely=0.95, anchor="center")
+
+
+
 
         backButton = BackButton(self, controller)
 
