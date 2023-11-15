@@ -184,6 +184,6 @@ class Generate:
     # fig.update_layout(title=f"{', '.join(companies)}'s price from {startDate} to {endDate}", xaxis_title='Date', yaxis_title='Price in USD')
     # fig.show()
 
-
-gen1 = Generate("2022-09-09", "2023-09-28", "AAPL", "CSCO", "GOOG")
-gen1.generate_bar_graph(False)
+if __name__ == "main":
+    gen1 = Generate("2022-09-09", "2023-09-28", "AAPL", "CSCO", "GOOG")
+    gen1.generate_line_graph(True)
