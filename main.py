@@ -11,6 +11,7 @@ async def main():
 
     app = tkinterApp()
     app.geometry("900x900")
+    app.title("Finance Analysis App")
     app.mainloop()
 
     await backfill_task  # Wait for the backfill task to complete
