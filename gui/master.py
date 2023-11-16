@@ -476,7 +476,7 @@ class GraphsScreen(tk.Frame):
 
         get_input_button = tk.Button(
             self,
-            text="Generate",
+            text="GENERATE",
             command=lambda: self.get_user_data_and_generate(
                 selected_company1,
                 selected_company2,
@@ -497,6 +497,72 @@ class GraphsScreen(tk.Frame):
 
 
 class SearchScreen(tk.Frame):
+    def show_search_results(self, data, date):
+        # destroy label if it already exists
+        if self.result_label:
+            self.result_label.destroy()
+
+        if type(data) == dict:
+            data = [
+                f"current high: {data['high']}",
+                f"current low: {data['low']}\n",
+                f"open price: {data['open']}",
+                f"current price: {data['currentPrice']}",
+                f"current percentage change: {data['currentPercentageChange']}\n",
+                f"current traded volume: {data['currentVolume']}",
+            ]
+            data = [str(x) for x in data]
+
+            self.result_label = tk.Label(
+                self,
+                text=f"Live data:\n\n\n" + "\n\n".join(data),
+                font=TEXT_BOX_FONT,
+                fg=WHITE,
+                bg=STANDARD_BLUE,
+                width=35,
+                pady=10,
+                borderwidth=3,
+                relief="solid",
+            )
+            self.result_label.place(relx=0.5, rely=0.75, anchor="center")
+
+            # issue with multiple searches
+        else:
+            self.result_label = tk.Label(
+                self,
+                text=f"Close price for {date}:" + f"\n\n{data}",
+                font=TEXT_BOX_FONT,
+                fg=WHITE,
+                bg=STANDARD_BLUE,
+                padx=10,
+                pady=10,
+                borderwidth=3,
+                relief="solid",
+            )
+            self.result_label.place(relx=0.5, rely=0.7, anchor="center")
+
+    def get_user_data_and_generate(self, company_entry, date_entry):
+        from DatabaseHandling.search import search_by_date_and_company
+
+        company = company_entry.get()
+        date = date_entry.get()
+
+        if not date:
+            message = "Please enter a date"
+            mb.showwarning("Date warning", message)
+            return
+        if not company:
+            message = "Please enter a company"
+            mb.showwarning("Data warning", message)
+            return
+
+        try:
+            result = search_by_date_and_company(company, date)
+            print(result)
+            self.show_search_results(result, date)
+        except Exception as e:
+            mb.showwarning("Data error", e)
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BACKGROUND_COLOR)
         label = tk.Label(
@@ -513,6 +579,35 @@ class SearchScreen(tk.Frame):
         label.place(relx=0.5, rely=0.05, anchor="center")
 
         backButton = BackButton(self, controller)
+
+        self.result_label = None  # Initialize result_label attribute
+
+        # Company Entry
+        company = tk.Label(
+            self, text="Company ticker:", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        company.place(relx=0.235, rely=0.2, anchor="center")
+        company_entry = tk.Entry(self, font=TEXT_BOX_FONT, width=12)
+        company_entry.place(relx=0.44, rely=0.185)
+
+        # Date Entry
+        date = tk.Label(
+            self, text="Date (yyyy-mm-dd):", font=BUTTON_FONT, bg=BACKGROUND_COLOR
+        )
+        date.place(relx=0.235, rely=0.3, anchor="center")
+        date_entry = tk.Entry(self, font=TEXT_BOX_FONT, width=12)
+        date_entry.place(relx=0.44, rely=0.285)
+
+        get_input_button = tk.Button(
+            self,
+            text="SEARCH",
+            command=lambda: self.get_user_data_and_generate(company_entry, date_entry),
+            highlightbackground=BACKGROUND_COLOR,
+            font=COMMAND_BUTTON_FONT,
+            width=15,
+            height=2,
+        )
+        get_input_button.place(relx=0.5, rely=0.45, anchor="center")
 
 
 class ThresholdsScreen(tk.Frame):
