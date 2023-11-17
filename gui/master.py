@@ -526,7 +526,6 @@ class SearchScreen(tk.Frame):
             )
             self.result_label.place(relx=0.5, rely=0.75, anchor="center")
 
-            # issue with multiple searches
         else:
             self.result_label = tk.Label(
                 self,
