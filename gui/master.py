@@ -579,7 +579,7 @@ class SearchScreen(tk.Frame):
 
         backButton = BackButton(self, controller)
 
-        self.result_label = None  # Initialize result_label attribute
+        self.result_label = None  # Initialize result_label attribute. Necessary
 
         # Company Entry
         company = tk.Label(
