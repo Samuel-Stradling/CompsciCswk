@@ -503,7 +503,7 @@ class SearchScreen(tk.Frame):
             self.result_label.destroy()
 
         if type(data) == dict:
-            data = [
+            data = [ # this happens when the date is today
                 f"current high: {data['high']}",
                 f"current low: {data['low']}\n",
                 f"open price: {data['open']}",
