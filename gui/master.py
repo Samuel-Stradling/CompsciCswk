@@ -116,13 +116,17 @@ class BackButton(tk.Button):
 class SortScreen(tk.Frame):
     def show_top_10_results(self, top_10_data: list, sort_by):
         # Create or update a label to display the top 10 results
+
+        if self.result_label:
+            self.result_label.destroy()
+
         top_10_data_reformatted = []
         top_10_data.reverse()
         for dictionary in top_10_data:
             temp = f"{dictionary['ticker']} on {dictionary['date']} at {dictionary[sort_by]} ({sort_by})"
             top_10_data_reformatted.append(temp)
 
-        result_label = tk.Label(
+        self.result_label = tk.Label(
             self,
             text="Top 10 Results:\n\n\n" + "\n\n".join(top_10_data_reformatted),
             font=TEXT_BOX_FONT,
@@ -133,7 +137,7 @@ class SortScreen(tk.Frame):
             borderwidth=3,
             relief="solid",
         )
-        result_label.place(relx=0.8, rely=0.4, anchor="center")
+        self.result_label.place(relx=0.8, rely=0.4, anchor="center")
 
         from datetime import datetime
 
@@ -203,6 +207,8 @@ class SortScreen(tk.Frame):
         label.place(relx=0.5, rely=0.05, anchor="center")
 
         backButton = BackButton(self, controller)
+
+        self.result_label = None # initialise so that label can be destroyed after each sort
 
         # Start Date Entry
         start_label = tk.Label(
