@@ -10,7 +10,7 @@
 - [ ] Improve error handling and messages for a better user experience on the search screen.
 
 ## Database Setup
--[ ] If feasable, reset the database and make sure to include 'low' data point to generate candlestick graphs (prerequisite for later todo)
+- [ ] If feasable, reset the database and make sure to include 'low' data point to generate candlestick graphs (prerequisite for later todo)
 
 ## Graph Screen
 - [ ] Add option to generate candlestick graphs (Prerequisite from database section must be fulfilled before this)
