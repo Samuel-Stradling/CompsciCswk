@@ -6,25 +6,25 @@ def call_ticker_current(ticker: str) -> list:
     Fetches the current stock data for a given ticker by webscraping the Polygon.io site.
 
     Parameters:
-        ticker (str): The ticker symbol of the stock.
+        - ticker (str): The ticker symbol of the stock.
 
     Returns:
-        list: A list containing the current stock data in the following format:
-        [date, {"ticker": ticker, "currentOpen": open_price, "currentHigh": high_price,
-        "currentLow": low_price, "currentVolume": volume, "prevClose": previous_close_price,
-        "currentPrice": current_price, "currentPercentageChange": percentage_change}]
-        - date (str): The current date in the format 'YYYY-MM-DD'.
-        - ticker (str): The provided ticker symbol.
-        - currentOpen (float): The opening price of the current trading session.
-        - currentHigh (float): The highest price of the current trading session.
-        - currentLow (float): The lowest price of the current trading session.
-        - currentVolume (int): The current trading volume.
-        - prevClose (float): The closing price of the previous trading session.
-        - currentPrice (float): The current price of the stock.
-        - currentPercentageChange (str): The percentage change of the stock price from the opening.
+        - list: A list containing the current stock data.
+          Format: [date, {"ticker": ticker, "currentOpen": open_price, "currentHigh": high_price,
+                   "currentLow": low_price, "currentVolume": volume, "prevClose": previous_close_price,
+                   "currentPrice": current_price, "currentPercentageChange": percentage_change}]
+          - date (str): The current date in the format 'YYYY-MM-DD'.
+          - ticker (str): The provided ticker symbol.
+          - currentOpen (float): The opening price of the current trading session.
+          - currentHigh (float): The highest price of the current trading session.
+          - currentLow (float): The lowest price of the current trading session.
+          - currentVolume (int): The current trading volume.
+          - prevClose (float): The closing price of the previous trading session.
+          - currentPrice (float): The current price of the stock.
+          - currentPercentageChange (str): The percentage change of the stock price from the opening.
 
     Raises:
-        NameError: If the provided ticker yields a non-200 status code response from the Polygon.io API.
+        - NameError: If the provided ticker yields a non-200 status code response from the Polygon.io API.
 
     Dependencies:
         - bs4 (BeautifulSoup): For parsing HTML content.
@@ -32,6 +32,9 @@ def call_ticker_current(ticker: str) -> list:
         - datetime: For capturing the current date and time.
         - json: For parsing JSON data.
         - requests: For making HTTP requests.
+
+    Note:
+        - The function uses web scraping to retrieve real-time stock data from Polygon.io.
 
     Example:
         >>> call_ticker_current("GOOGL")
@@ -95,31 +98,31 @@ def search_by_date_and_company(company: str, date: str) -> float | dict:
     Retrieve the close price of a company on a specific date, or the high and low for a company today.
 
     Parameters:
-    - company (str): The ticker symbol of the company for which you want to retrieve the stock prices.
-    - date (str): The date in the format 'yyyy-mm-dd' for which you want to retrieve the stock prices.
+        - company (str): The ticker symbol of the company for which you want to retrieve the stock prices.
+        - date (str): The date in the format 'yyyy-mm-dd' for which you want to retrieve the stock prices.
 
     Returns:
-    - dictionary: A dictionary containing the high and low stock prices of the specified company on the provided date.
-      The tuple format is (high_price, low_price). ONLY IF the date is the current date, otherwise:
-    - float: A float holding the close price of the selected company on the selected date
+        - dictionary: A dictionary containing the high and low stock prices of the specified company on the provided date.
+          The tuple format is (high_price, low_price). ONLY IF the date is the current date, otherwise:
+        - float: A float holding the close price of the selected company on the selected date
 
     Raises:
-    - ValueError: If the data is not available for the specified company on the provided date.
-      This can occur if the market was closed on the given date or if data for the company is unavailable.
+        - ValueError: If the data is not available for the specified company on the provided date.
+          This can occur if the market was closed on the given date or if data for the company is unavailable.
 
     Dependencies:
-    - The 'datetime' module for obtaining the current date and time.
-    - Access to a SQLite database named "data/main.sql" to fetch historical stock price data.
-    - The 'sqlite3' module for accessing and searching the database
-    - The 'call_ticker_current' function for accessing real time data
+        - The 'datetime' module for obtaining the current date and time.
+        - Access to a SQLite database named "data/main.sql" to fetch historical stock price data.
+        - The 'sqlite3' module for accessing and searching the database
+        - The 'call_ticker_current' function for accessing real-time data
 
     Example:
-    ```
-    >>> search_by_date_and_company("AAPL", "2023-09-06")
-    (150.29, 149.70)
-    ```
+        ```
+        >>> search_by_date_and_company("AAPL", "2023-09-06")
+        {'high': 150.29, 'low': 149.70, 'currentPrice': 149.85,
+        'currentPercentageChange': '+0.65%', 'currentVolume': 1200000, 'open': 149.80}
+        ```
     """
-
     from datetime import datetime
 
     today = str(datetime.now().date())
@@ -158,10 +161,8 @@ def search_by_date_and_company(company: str, date: str) -> float | dict:
 def search_by_metrics():
     # these results need to be saved locally in txt
 
-    # LOW PRIORITY
 
-    # metrics to search by:
-    #     Stock Price Metrics:
+    #possible  metrics to search by:
 
     # Closing Price: Allow users to search for companies based on their closing stock prices on specific dates.
     # Opening Price: Similar to closing price but for the opening price.
