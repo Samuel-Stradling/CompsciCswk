@@ -53,6 +53,24 @@ class SortItems:
         return self._today
 
     def __write_results_to_file(self, data: list):
+        """
+        Write search results to a file with a filename based on the current date and sorting metric.
+
+        Parameters:
+            - data (list): The list of search results to be written to the file.
+
+        Returns:
+            None
+
+        Dependencies:
+            - The 'os' module for handling file and directory operations.
+
+        Note:
+            - If a file with the same name already exists, a unique identifier will be appended to the filename.
+
+        Example:
+            - The method is intended for internal use within a class and does not provide a direct external interface.
+        """
         import os
 
         FolderName = "DatabaseHandling/SortSearchResults"
@@ -84,6 +102,27 @@ class SortItems:
             raise ValueError("Invalid sort metric")
 
     def __check_date_validity(self):
+        """
+        Check the validity of the start and end dates for search operations.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            - ValueError: If the end date is set to the current date, it is adjusted to yesterday.
+                        If the start date is earlier than 2020 or in an incorrect format.
+                        If the date range is not valid (start date must be before end date,
+                        and end date must be before or equal to today).
+
+        Dependencies:
+            - The 'datetime' module for handling date and time operations.
+
+        Note:
+            - This method is intended for internal use within a class and does not provide a direct external interface.
+        """
         if self._endDate == self._today:  # if the end date is set to the current date
             self._endDate = str(
                 (datetime.today() - timedelta(days=1)).date()
@@ -111,6 +150,21 @@ class SortItems:
             raise ValueError("The entered dates were not valid")
 
     def __select_dates(self):
+        """
+        Select a range of dates between the start and end dates.
+
+        Parameters:
+            None
+
+        Returns:
+            - list: A list containing all the dates in the range between the start and end dates.
+
+        Dependencies:
+            - The 'datetime' module for handling date and time operations.
+
+        Note:
+            - This method is intended for internal use within a class and does not provide a direct external interface.
+        """
         dates = []
         workingDate = (
             self._startDate
