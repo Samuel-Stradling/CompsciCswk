@@ -19,3 +19,7 @@
 ## Web Scraping and Threshold System
 - [ ] Integrate a web scraping feature.
 - [ ] Implement a threshold system for relevant data.
+
+## Auto Dependency Installing
+- [ ] Identify all libraries used and depedencies
+- [ ] Make a script that checks for them and auto installs as necessary
