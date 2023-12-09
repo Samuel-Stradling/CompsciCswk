@@ -7,6 +7,6 @@ My client is a friend who trades on the stock market. I initially approached him
 
 Ultimately, this is a one-stop-shop finance analysis system that is capable of producing graphs, sorting and searching data, and that stores ~ 3 years worth of financial data about 100 companies, stored in a database that is kept up to date.
 
-Please find the ToDo.md file in docs/ folder to find features that have yet to be implemented.
+Please find the [ToDo.md](../docs/ToDo.md) file to see features that have yet to be implemented.
 
 Please also find the ProjectReport.docx file in the docs/ folder to find a full project report for this project.
