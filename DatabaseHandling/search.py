@@ -135,7 +135,7 @@ def search_by_date_and_company(company: str, date: str) -> float | dict:
             "currentPrice": data["currentPrice"],
             "currentPercentageChange": data["currentPercentageChange"],
             "currentVolume": data["currentVolume"],
-            "open": data["currentOpen"]
+            "open": data["currentOpen"],
         }
     try:
         conn = sqlite3.connect("data/main.sql")
@@ -161,8 +161,7 @@ def search_by_date_and_company(company: str, date: str) -> float | dict:
 def search_by_metrics():
     # these results need to be saved locally in txt
 
-
-    #possible  metrics to search by:
+    # possible  metrics to search by:
 
     # Closing Price: Allow users to search for companies based on their closing stock prices on specific dates.
     # Opening Price: Similar to closing price but for the opening price.
