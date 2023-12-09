@@ -65,7 +65,7 @@ def init_all():
 
 
 def fill_Companies_table():
-    # hard coded 🤷‍♂️🤢
+    # hard coded 🤷‍♂️
     from companyDict import company_dictionary
 
     try:
