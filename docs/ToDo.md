@@ -1,5 +1,8 @@
 # ToDo List
 
+## Docstring the code
+- [ ] Some code has docstrings, make sure all code has docstrings, even before further coding is done as to aid that further coding.
+
 ## Backfill Process
 - [ ] Replace console message with a new Tkinter screen during backfill process to display a loading screen.
 
