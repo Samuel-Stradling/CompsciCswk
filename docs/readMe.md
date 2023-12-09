@@ -9,4 +9,4 @@ Ultimately, this is a one-stop-shop finance analysis system that is capable of p
 
 Please find the [ToDo.md](../docs/ToDo.md) file to see features that have yet to be implemented.
 
-Please also find the ProjectReport.docx file in the docs/ folder to find a full project report for this project.
+Please also find the [projectReport](../docs/projectReport.docx) file to see a full project report for this project.
