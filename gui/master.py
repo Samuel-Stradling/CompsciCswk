@@ -326,8 +326,8 @@ class GraphsScreen(tk.Frame):
                     message = "1 or more companies must be selected"
                     mb.showwarning("Invalid data", message=message)
                     return
-                elif len(companies) == 1:
-                    companies = companies[0]
+                # elif len(companies) == 1:
+                #     companies = companies[0]
                 generator = Generate(start_date, end_date, *companies)
                 if graph_type == "line":
                     generator.generate_line_graph(using_single_axes)
