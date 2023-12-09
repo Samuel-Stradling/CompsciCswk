@@ -64,7 +64,6 @@ def call_all_companies(date: str) -> list:
 
 
 def add_missing_dates():
-
     from datetime import datetime, timedelta
 
     yesterday = (datetime.now() - timedelta(days=1)).date()
@@ -156,7 +155,6 @@ def find_last_full_date() -> str:
 
 
 def insert_data_into_stockprices(data: list):
-
     try:
         conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
@@ -213,7 +211,7 @@ def update_date_statuses(date: str):
     Example Use:
     insert_data_into_stockprices(data)
     """
- 
+
     try:
         conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
