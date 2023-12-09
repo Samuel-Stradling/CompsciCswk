@@ -3,34 +3,32 @@ import sqlite3
 
 def call_all_companies(date: str) -> list:
     """
-    Fetches aggregated financial data for selected companies from the Polygon API and returns a list.
-
-    This function retrieves historical aggregated financial data for specific companies
-    based on the provided date. The function utilizes the Polygon API to gather data
-    on stock prices, volumes, and other metrics.
+    Retrieves data about companies from the Polygon API based on the given date.
 
     Parameters:
-        date (str): The date for which financial data is to be fetched in the 'YYYY-MM-DD' format.
+        date (str): The date in the format 'yyyy-mm-dd' for which data is requested.
 
     Returns:
-        list: A list containing financial data for the specified date. The first element
-        in the list is the input date, followed by dictionaries containing aggregated data
-        for selected companies. Each dictionary includes information such as stock symbol,
-        stock prices, volumes, and other relevant metrics.
+        list: A list containing the date (element 0) and relevant company data as dictionaries (subsequent elements are dictionaries).
 
     Raises:
-        ConnectionError: If the API request to Polygon fails with a non-200 status code.
-        ValueError: If no data is available for the provided date or if the market was closed.
+        ConnectionError: if the API call fails or returns an error.
+        ValueError: Raised when the market was closed on the specified date.
 
     Dependencies:
-        - This function requires the 'os', 'requests', 'dotenv', and 'companies' (this is a local module containing a dictionary of all of the stored companies and their acronyms) modules.
-        - The API token should be set as an environment variable named "api-token" using dotenv.
+        - The function relies on the 'requests' module to make API calls.
+        - The function also depends on a 'companies' module that contains the 'company_dictionary'.
+        - The function requires the 'dotenv' module to load environment variables.
+
+    Note:
+        - Make sure to set up the 'api-token' environment variable with your API key.
+        - The function will filter for relevant companies based on the 'company_dictionary'.
 
     Example:
-        >>> call_all_companies("2023-08-20")
-        ['2023-08-20', {...company_data...}, {...company_data...}, ...]
+        >>> data = call_all_companies('2023-07-31')
+        >>> print(data)
+        ['2023-07-31', {'c': 100.2, 'h': 105.0, 'l': 99.5, 'o': 101.0, 't': 166726400000, 'n': 1200, 'v': 500000}]
     """
-
     import os
     import requests
     from dotenv import load_dotenv
@@ -66,31 +64,6 @@ def call_all_companies(date: str) -> list:
 
 
 def add_missing_dates():
-    """
-    Adds missing dates to the 'DateStatuses' table in the database.
-
-    This function calculates the missing dates between the latest date recorded in
-    the 'DateStatuses' table and yesterday's date. It then inserts records for these
-    missing dates with default values into the table.
-
-    Parameters:
-        None
-
-    Raises:
-        sqlite3.Error: If there is an error while executing the database query.
-
-    Dependencies:
-        - The function requires the 'datetime' and 'sqlite3' modules.
-        - Assumes a connection to an SQLite database named "main.sql" stored with a local path of "data/main.sql"
-
-    Note:
-        - This function assumes that the 'DateStatuses' table has columns 'date',
-          'complete_data', and 'market_open'.
-
-    Example:
-        >>> add_missing_dates_to_database()
-        # Adds missing dates between the latest recorded date and yesterday's date to the database.
-    """
 
     from datetime import datetime, timedelta
 
@@ -133,22 +106,30 @@ def add_missing_dates():
 
 def find_last_full_date() -> str:
     """
-    Finds the last date with a full set of data from the database.
+    Ensures that all dates from the latest recorded date in the 'DateStatuses' table
+    up to yesterday are present, filling in missing dates with default values.
 
     Parameters:
-        None
+    None
 
     Returns:
-        str: The last date with a full set of data in the format 'YYYY-MM-DD',
-             or None if no data is found.
+    None
 
     Raises:
-        sqlite3.Error: If there is an error while executing the database query.
+    sqlite3.Error: If there is an error while connecting to or querying the SQLite database.
 
     Dependencies:
-        - Assumes a connection to an SQLite database named "main.sql" stored with a local path of "data/main.sql"
-    """
+    - sqlite3
+    - datetime
+    - timedelta
 
+    Note:
+    This function assumes the existence of an SQLite database named 'data/main.sql' and a table
+    named 'DateStatuses' with columns 'date', 'complete_data', and 'market_open'.
+
+    Example Use:
+    add_missing_dates()
+    """
     try:
         conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
@@ -175,24 +156,7 @@ def find_last_full_date() -> str:
 
 
 def insert_data_into_stockprices(data: list):
-    """
-    Inserts data returned from call_all_companies into the stockprices table.
 
-    This function takes a list of dictionaries containing stock price data for multiple
-    companies and inserts this data into a SQLite database table named 'StockPrices'.
-
-    Parameters:
-        data (list): A list of dictionaries containing stock price data for each company in the following format: ['2023-08-20', {...company_data...}, {...company_data...}, ...]
-
-    Returns:
-        None.
-
-    Raises:
-        sqlite3.Error: If there is an error while executing the database insertion query.
-
-    Dependencies:
-        - Assumes a connection to an SQLite database named "main.sql" stored with a local path of "data/main.sql"
-    """
     try:
         conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
@@ -228,33 +192,28 @@ def insert_data_into_stockprices(data: list):
 
 def update_date_statuses(date: str):
     """
-    Updates the date status table based on the stock prices table.
-
-    This function checks the number of entries for a given date in the StockPrices table
-    and updates the DateStatuses table accordingly. If the count is greater than or equal
-    to 90, it sets the 'complete_data' field to True. Otherwise, it sets the 'market_open'
-    field to False.
+    Inserts stock price data into the 'StockPrices' table in the SQLite database.
 
     Parameters:
-        date (str): The date for which to update the status in the DateStatuses table.
+    - data (list): A list of dictionaries containing stock price information for multiple companies.
 
     Returns:
-        None
+    None
 
     Raises:
-        sqlite3.Error: If there is an error while working with the SQLite database.
+    sqlite3.Error: If there is an error while connecting to or querying the SQLite database.
 
     Dependencies:
-        - This function requires the sqlite3 library to be imported.
+    - sqlite3
 
     Note:
-        - The list of companies stored is not always available in the data, but the function
-          still operates based on the count of entries.
+    This function assumes the existence of an SQLite database named 'data/main.sql' and a table
+    named 'StockPrices' with columns 'ticker', 'date', 'open', 'close', 'high', 'volume', and 'weighted_volume'.
 
-    Example:
-        update_date_statuses("2023-08-21")
+    Example Use:
+    insert_data_into_stockprices(data)
     """
-
+ 
     try:
         conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
@@ -289,27 +248,33 @@ def update_date_statuses(date: str):
 
 def backfill(lastFullDate: str):
     """
-    Controls the backfilling process for stock data.
-
-    This function uses all of the other functions in autoBackfill.py, and essentially acts as a master controller function, actually responsible
-    for corroborating all of the data into all of the right places
+    Backfills missing data for dates starting from the last fully updated date to yesterday.
 
     Parameters:
-        lastFullDate (str): The most recent date with a full set of data.
+    - lastFullDate (str): The last fully updated date in the format "%Y-%m-%d".
 
     Returns:
-        Does not return anything.
+    None
 
     Raises:
-        ValueError: when the length of the query returned from the api is 0, indicating that the market was closed. This exception is caught and handled.
+    ValueError: If there is an issue with the value returned from 'call_all_companies'.
 
     Dependencies:
-        - This function uses the 'time' and 'datetime' modules.
-        - This function uses the 'add_missing_dates' procedure.
+    - time
+    - datetime
+    - timedelta
+    - add_missing_dates
+    - call_all_companies
+    - insert_data_into_stockprices
+    - update_date_statuses
 
-    Example:
-        backfill("2023-08-19")
-        backfill(find_last_full_date())
+    Note:
+    This function relies on external functions 'add_missing_dates', 'call_all_companies',
+    'insert_data_into_stockprices', and 'update_date_statuses'. It also uses a sleep duration of
+    12 seconds to comply with the rate limits of the free API plan.
+
+    Example Use:
+    backfill("2023-01-01")
     """
     import time
     from datetime import timedelta, datetime
