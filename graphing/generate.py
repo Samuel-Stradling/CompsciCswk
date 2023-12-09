@@ -13,6 +13,27 @@ class Generate:
         self.__get_data()
 
     def __check_dates(self):
+        """
+        Check the validity of the start and end dates.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            - ValueError: If the end date is set to the current date, it is adjusted to yesterday.
+                        If the start date is earlier than 2020 or in an incorrect format.
+                        If the date range is not valid (start date must be before end date,
+                        and end date must be before or equal to today).
+
+        Dependencies:
+            - The 'datetime' module for handling date and time operations.
+
+        Note:
+            - This method is intended for internal use within a class and does not provide a direct external interface.
+        """
         from datetime import datetime, timedelta
 
         today = str(datetime.today().date())
@@ -39,6 +60,22 @@ class Generate:
             raise ValueError("The entered dates were not valid")
 
     def __get_data(self):
+        """
+        Retrieve stock price data from a SQLite database for specified companies and date range.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+
+        Dependencies:
+            - The 'pandas' library for handling data in DataFrame format.
+            - The 'sqlite3' module for accessing and querying the database.
+
+        Note:
+            - This method is intended for internal use within a class and does not provide a direct external interface.
+        """
         import pandas as pd
 
         try:
@@ -80,6 +117,26 @@ class Generate:
                 conn.close()
 
     def generate_line_graph(self, displayOnSameGraph=True):
+        """
+        Generate and display a line graph of stock prices for specified companies over a given date range.
+
+        Parameters:
+            - displayOnSameGraph (bool): If True, display all companies on the same graph. If False, display each company on a separate graph.
+
+        Returns:
+            None
+
+        Dependencies:
+            - The 'plotly.express' library for creating interactive visualizations.
+
+        Note:
+            - This method is intended for external use and provides a direct interface to generate line graphs.
+
+        Example:
+            ```
+            >>> instance.generate_line_graph()
+            ```
+        """
         import plotly.express as px
 
         companies = self._data["ticker"].unique()
@@ -117,6 +174,26 @@ class Generate:
                 fig.show()
 
     def generate_bar_graph(self, displayOnSameGraph=True):
+        """
+        Generate and display a bar graph of stock prices for specified companies over a given date range.
+
+        Parameters:
+            - displayOnSameGraph (bool): If True, display all companies on the same graph. If False, display each company on a separate graph.
+
+        Returns:
+            None
+
+        Dependencies:
+            - The 'plotly.express' library for creating interactive visualizations.
+
+        Note:
+            - This method is intended for external use and provides a direct interface to generate bar graphs.
+
+        Example:
+            ```
+            >>> instance.generate_bar_graph()
+            ```
+        """
         import plotly.express as px
 
         companies = self._data["ticker"].unique()
@@ -183,6 +260,7 @@ class Generate:
     # fig = go.Figure(data=[go.Candlestick(x=data['date'], open=data['open'], high=data['high'], low=['low'], close=data['close'])])
     # fig.update_layout(title=f"{', '.join(companies)}'s price from {startDate} to {endDate}", xaxis_title='Date', yaxis_title='Price in USD')
     # fig.show()
+
 
 if __name__ == "main":
     gen1 = Generate("2022-09-09", "2023-09-28", "AAPL", "CSCO", "GOOG")
