@@ -33,5 +33,6 @@
 - [ ] Identify all libraries used and depedencies
 - [ ] Make a script that checks for them and auto installs as necessary
 
-## Autobackfill.py
+## Database Handling
 - [ ] Change the redundant restating of call_all_companies and see if it can be imported
+- [ ] Do same as above but with companies.py too
