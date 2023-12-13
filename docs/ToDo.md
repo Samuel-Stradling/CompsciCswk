@@ -21,6 +21,7 @@
 ## Sort Screen
 - [ ] Implement sorting by multiple metrics.
 - [ ] Develop quicksort and heapsort algorithms for the sort screen.
+- [ ] In sort.py, check comment about using f string first. See if doable to clean up code
 
 ## Settings and Preferences
 - [ ] Create a settings and preferences system to allow users to customize their experience.
