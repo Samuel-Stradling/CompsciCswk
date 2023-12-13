@@ -1,7 +1,7 @@
 # ToDo List
 
 ## Docstring the code
-- [ ] Some code has docstrings, make sure all code has docstrings, even before further coding is done as to aid that further coding.
+- [x] Some code has docstrings, make sure all code has docstrings, even before further coding is done as to aid that further coding.
 
 ## Backfill Process
 - [ ] Replace console message with a new Tkinter screen during backfill process to display a loading screen.
@@ -32,3 +32,6 @@
 ## Auto Dependency Installing
 - [ ] Identify all libraries used and depedencies
 - [ ] Make a script that checks for them and auto installs as necessary
+
+## Autobackfill.py
+- [ ] Change the redundant restating of call_all_companies and see if it can be imported
