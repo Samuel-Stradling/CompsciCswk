@@ -4,7 +4,8 @@
 - [x] Some code has docstrings, make sure all code has docstrings, even before further coding is done as to aid that further coding.
 
 ## Backfill Process
-- [ ] Replace console message with a new Tkinter screen during backfill process to display a loading screen.
+- [ ] Replace console message with a new Tkinter screen during backfill process to display a loading screen. 
+- This has proved very difficult
 
 ## Search Data Screen
 - [ ] Enhance historic dates display by presenting more information than just the close price.
@@ -37,3 +38,6 @@
 ## Database Handling
 - [ ] Change the redundant restating of call_all_companies and see if it can be imported
 - [ ] Do same as above but with companies.py too
+
+## Reset screens
+- [ ] Reset screens when the back button is pressed
