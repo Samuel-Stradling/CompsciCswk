@@ -5,7 +5,7 @@
 
 ## Backfill Process
 - [ ] Replace console message with a new Tkinter screen during backfill process to display a loading screen. 
-- This has proved very difficult
+- This has proven very difficult
 
 ## Search Data Screen
 - [x] Enhance historic dates display by presenting more information than just the close price.
