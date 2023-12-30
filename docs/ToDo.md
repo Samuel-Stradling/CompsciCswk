@@ -11,7 +11,7 @@
 - [x] Enhance historic dates display by presenting more information than just the close price.
 - [ ] Include calculated data (e.g., percentage change since the last day) for historic dates.
 - [ ] Implement search by metric functionality.
-- [ ] Improve error handling and messages for a better user experience on the search screen.
+- [x] Improve error handling and messages for a better user experience on the search screen.
 
 ## Database Setup
 - [ ] If feasable, reset the database and make sure to include 'low' data point to generate candlestick graphs (prerequisite for later todo)

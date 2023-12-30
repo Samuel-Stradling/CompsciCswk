@@ -89,6 +89,29 @@ def call_ticker_current(ticker: str) -> list:
     else:
         raise NameError(f"Provided ticker yielded {response.status_code} response")
 
+def check_company_exists(company: str):
+        conn = sqlite3.connect("data/main.sql")
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT COUNT(1) FROM Companies WHERE ticker=?", (company,)
+        )
+        result = cursor.fetchall()
+        if result[0][0] == 0:
+            raise ValueError(f"The given company ticker, {company}, is not recognised")
+        
+def check_date_validity(givenDate: str):
+    from datetime import datetime, timedelta
+    today = datetime.today().date()
+    try:
+        a = datetime.strptime(givenDate, "%Y-%m-%d")
+    except:
+        raise ValueError("Incorrect date format")
+
+    if int(givenDate[:4]) < 2020:
+        raise ValueError("Start date too early: data not available")
+
+    if datetime.strptime(givenDate, "%Y-%m-%d").date() > today:
+        raise ValueError("Date cannot be in the future")
 
 # search for date and company
 
@@ -136,6 +159,9 @@ def search_by_date_and_company(company: str, date: str) -> dict:
     """
     from datetime import datetime
 
+    check_company_exists(company)
+    check_date_validity(date)
+
     today = str(datetime.now().date())
 
     if date == today:
@@ -156,7 +182,7 @@ def search_by_date_and_company(company: str, date: str) -> dict:
             (company, date),
         )
         result = cursor.fetchall()
-        if result == None:
+        if result == None or result == []:
             raise ValueError(
                 f"Data is not available for {company} on {date}. The market may have been closed, or data for that company is not available"
             )
