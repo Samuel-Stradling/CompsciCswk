@@ -8,7 +8,7 @@
 - This has proved very difficult
 
 ## Search Data Screen
-- [ ] Enhance historic dates display by presenting more information than just the close price.
+- [x] Enhance historic dates display by presenting more information than just the close price.
 - [ ] Include calculated data (e.g., percentage change since the last day) for historic dates.
 - [ ] Implement search by metric functionality.
 - [ ] Improve error handling and messages for a better user experience on the search screen.

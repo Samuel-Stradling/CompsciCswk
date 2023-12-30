@@ -93,34 +93,45 @@ def call_ticker_current(ticker: str) -> list:
 # search for date and company
 
 
-def search_by_date_and_company(company: str, date: str) -> float | dict:
+def search_by_date_and_company(company: str, date: str) -> dict:
     """
-    Retrieve the close price of a company on a specific date, or the high and low for a company today.
+    Retrieves stock price information for a given company on a specific date.
 
     Parameters:
-        - company (str): The ticker symbol of the company for which you want to retrieve the stock prices.
-        - date (str): The date in the format 'yyyy-mm-dd' for which you want to retrieve the stock prices.
+        company (str): The ticker symbol of the company.
+        date (str): The date for which the stock price information is requested (YYYY-MM-DD).
 
     Returns:
-        - dictionary: A dictionary containing the high and low stock prices of the specified company on the provided date.
-          The tuple format is (high_price, low_price). ONLY IF the date is the current date, otherwise:
-        - float: A float holding the close price of the selected company on the selected date
+        dict: A dictionary containing stock price information. The structure of the dictionary depends on the availability of data:
+              - If the requested date is today, it returns current stock data with keys:
+                - "high": Current day's highest stock price.
+                - "low": Current day's lowest stock price.
+                - "currentPrice": Current stock price.
+                - "currentPercentageChange": Percentage change in stock price.
+                - "currentVolume": Current day's trading volume.
+                - "open": Current day's opening stock price.
+              - If the requested date is not today, it retrieves historical stock data with keys:
+                - "close": Closing stock price on the specified date.
+                - "open": Opening stock price on the specified date.
+                - "high": Highest stock price on the specified date.
+                - "volume": Trading volume on the specified date.
+                - "weighted_volume": Weighted trading volume on the specified date.
 
     Raises:
-        - ValueError: If the data is not available for the specified company on the provided date.
-          This can occur if the market was closed on the given date or if data for the company is unavailable.
+        ValueError: If data is not available for the specified company on the given date.
+                    This may occur if the market was closed, or data for that company is not available.
 
     Dependencies:
-        - The 'datetime' module for obtaining the current date and time.
-        - Access to a SQLite database named "data/main.sql" to fetch historical stock price data.
-        - The 'sqlite3' module for accessing and searching the database
-        - The 'call_ticker_current' function for accessing real-time data
+        - This function depends on an external function call_ticker_current(company) when the date is today.
+          The call_ticker_current function is expected to return a dictionary with stock data.
+
+        - SQLite3 is required for database operations. Ensure the 'data/main.sql' database exists with the necessary table 'StockPrices'.
+          The table should have columns: 'ticker', 'date', 'close', 'open', 'high', 'volume', and 'weighted_volume'.
 
     Example:
         ```
-        >>> search_by_date_and_company("AAPL", "2023-09-06")
-        {'high': 150.29, 'low': 149.70, 'currentPrice': 149.85,
-        'currentPercentageChange': '+0.65%', 'currentVolume': 1200000, 'open': 149.80}
+        >>> search_by_date_and_company("AAPL", "2023-01-01")
+        {"close": 150.0, "open": 145.0, "high": 155.0, "volume": 1000000, "weighted_volume": 500000.0}
         ```
     """
     from datetime import datetime
@@ -141,15 +152,21 @@ def search_by_date_and_company(company: str, date: str) -> float | dict:
         conn = sqlite3.connect("data/main.sql")
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT close FROM StockPrices WHERE ticker = ? AND date = ?",
+            "SELECT close, open, high, volume, weighted_volume FROM StockPrices WHERE ticker = ? AND date = ?",
             (company, date),
         )
-        result = cursor.fetchone()
+        result = cursor.fetchall()
         if result == None:
             raise ValueError(
                 f"Data is not available for {company} on {date}. The market may have been closed, or data for that company is not available"
             )
-        return float(result[0])
+        return {
+            "close": result[0][0],
+            "open": result[0][1],
+            "high": result[0][2],
+            "volume": result[0][3],
+            "weighted_volume": result[0][4]
+        }
 
     finally:
         if cursor:

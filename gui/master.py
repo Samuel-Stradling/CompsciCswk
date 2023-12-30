@@ -508,8 +508,8 @@ class SearchScreen(tk.Frame):
         if self.result_label:
             self.result_label.destroy()
 
-        if type(data) == dict:
-            data = [ # this happens when the date is today
+        if len(data) == 6:
+            data = [ # live data has one more metric at the moment(percentage change)
                 f"current high: {data['high']}",
                 f"current low: {data['low']}\n",
                 f"open price: {data['open']}",
@@ -533,9 +533,18 @@ class SearchScreen(tk.Frame):
             self.result_label.place(relx=0.5, rely=0.75, anchor="center")
 
         else:
+            data = [ # live data has one more metric at the moment(percentage change)
+                f"\nhigh: {data['high']}",
+                f"close price: {data['close']}",
+                f"open price: {data['open']}",
+                f"volume traded: {data['volume']}",
+                f"weighted volume: {data['weighted_volume']}\n",
+
+            ]
+            data = [str(x) + '\n' for x in data]
             self.result_label = tk.Label(
                 self,
-                text=f"Close price for {date}:" + f"\n\n{data}",
+                text="\n\n".join(data),
                 font=TEXT_BOX_FONT,
                 fg=WHITE,
                 bg=STANDARD_BLUE,
