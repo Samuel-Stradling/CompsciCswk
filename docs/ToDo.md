@@ -41,3 +41,6 @@
 
 ## Reset screens
 - [ ] Reset screens when the back button is pressed
+
+## Adding new companies
+- [ ] Investigate the possiblity of a feature that allows a user to add a new company to the database.
