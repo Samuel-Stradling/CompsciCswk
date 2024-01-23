@@ -19,6 +19,7 @@
 
 ## Graph Screen
 - [ ] Add option to generate candlestick graphs (Prerequisite from database section must be fulfilled before this)
+- [ ] Ensure that the system is able to handle duplicate companies being selected
 
 ## Sort Screen
 - [ ] Implement sorting by multiple metrics.
