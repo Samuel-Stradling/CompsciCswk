@@ -47,3 +47,6 @@
 
 ## Adding new companies
 - [ ] Investigate the possiblity of a feature that allows a user to add a new company to the database.
+
+## Currency data
+ - [ ] Investigate the possibility of storing currency data in the system
