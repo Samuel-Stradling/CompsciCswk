@@ -1,5 +1,8 @@
 # ToDo List
 
+## Refactoring project structure
+- [ ] Look into potential ways to restructure the project to make it closer to industry standard, or at least more clear
+
 ## Docstring the code
 - [x] Some code has docstrings, make sure all code has docstrings, even before further coding is done as to aid that further coding.
 
