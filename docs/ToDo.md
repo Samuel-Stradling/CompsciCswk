@@ -24,7 +24,8 @@
 ## Sort Screen
 - [ ] Add a check for if the sort save directory exists, and if it doesn't, create it
 - [ ] Implement sorting by multiple metrics.
-- [ ] Develop quicksort and heapsort algorithms for the sort screen.
+- [ ] Look into the system choosing the optimal sort method, instead of the user
+- [ ] Develop quicksort and heapsort algorithms.
 - [ ] In sort.py, check comment about using f string first. See if doable to clean up code
 
 ## Settings and Preferences
