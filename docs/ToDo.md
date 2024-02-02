@@ -45,6 +45,7 @@
 ## Database Handling
 - [ ] Change the redundant restating of call_all_companies and see if it can be imported
 - [ ] Do same as above but with companies.py too
+- [ ] Examine database scalability and make necessary changes (i.e. removing data more than 3 years old?)
 
 ## Reset screens
 - [ ] Reset screens when the back button is pressed
