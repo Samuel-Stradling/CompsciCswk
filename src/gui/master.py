@@ -300,7 +300,7 @@ class GraphsScreen(tk.Frame):
         graph_type,
         using_single_axes,
     ):
-        from Graphing.generate import Generate
+        from graphing.generate import Generate
 
         # Retrieve the selected companies from the dropdown boxes
         company1 = selected_company1.get()
