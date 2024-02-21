@@ -1,6 +1,6 @@
 import asyncio
 from DatabaseHandling.autoBackfill import backfill, find_last_full_date
-from gui.master import tkinterApp
+from Gui.master import tkinterApp
 
 async def display_gui():
     await asyncio.sleep(0)  # Allows other tasks to run, just a placeholder
