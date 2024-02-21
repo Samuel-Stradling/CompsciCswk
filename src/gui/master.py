@@ -145,7 +145,7 @@ class SortScreen(tk.Frame):
 
         save_dir_label = tk.Label(
             self,
-            text=f"Saved to /DatabaseHandling/SortSearchResults/{date}-{sort_by}X.txt",
+            text=f"Saved to src/DatabaseHandling/SortSearchResults/{date}-{sort_by}X.txt",
             font=ITALIC_SAVE_DIR_FONT,
             fg=WHITE,
             bg=STANDARD_BLUE,

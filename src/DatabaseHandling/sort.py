@@ -73,7 +73,7 @@ class SortItems:
         """
         import os
 
-        FolderName = "DatabaseHandling/SortSearchResults"
+        FolderName = "src/DatabaseHandling/SortSearchResults"
         FileName = f"{self._today}-{self._sortMetric}.txt"
 
         folderPath = os.path.join(os.getcwd(), FolderName)
@@ -88,7 +88,6 @@ class SortItems:
                 new_file_name = f"{file_base_name}{count}{file_extension}"
                 filePath = os.path.join(folderPath, new_file_name)
                 count += 1
-        filePath = "../"
 
         with open(filePath, "w") as file:
             file.write(f"from {self._startDate} to {self._endDate}")
