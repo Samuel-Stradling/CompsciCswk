@@ -2,6 +2,7 @@
 
 ## Refactoring project structure
 - [ ] Look into potential ways to restructure the project to make it closer to industry standard, or at least more clear
+- [ ] Change all functions that don't take args to be passed 'None"
 
 ## Docstring the code
 - [x] Some code has docstrings, make sure all code has docstrings, even before further coding is done as to aid that further coding.
