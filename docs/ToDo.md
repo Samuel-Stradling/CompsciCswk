@@ -11,6 +11,8 @@
 - [ ] Replace console message with a new Tkinter screen during backfill process to display a loading screen. 
 - This has proven very difficult
 
+- [ ] Look into using a more suitable data structure for storing dates that do not have data and are to-be filled
+
 ## Search Data Screen
 - [x] Enhance historic dates display by presenting more information than just the close price.
 - [ ] Add commas to relevant numbers.
